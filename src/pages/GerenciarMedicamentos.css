@@ -125,24 +125,28 @@
 }
 
 .btn-editar {
-    background-color: #3b82f6;
-    color: white;
+    background-color: #0c4b8c !important;
+    color: white !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .btn-editar:hover {
-    background-color: #2563eb;
-    transform: translateY(-2px);
+    background-color: #09386a !important;
 }
 
 .btn-excluir {
-    background-color: #fff;
-    color: #ef4444;
-    border: 1px solid red;
+    background-color: #ffffff;
+    color: #c53030;
+    border: 1px solid #c53030;
 }
 
 .btn-excluir:hover {
-    border: 1px solid rgb(173, 2, 2);
-    transform: translateY(-2px);
+    border: 1px solid #c53030(173, 2, 2);
+    background-color: #c53030;
+    color: #ffffff;
 }
 
 .nenhum-registro {
