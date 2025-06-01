@@ -7,18 +7,20 @@ import Assistidas from './pages/Assistidas'
 import CadastroAssistida from './pages/CadastroAssistida'
 import Consultas from './pages/Consultas'
 import AgendarConsulta from './pages/AgendarConsulta'
-import Medicamentos from './pages/Medicamentos'
+import Medicamentos from './pages/GerenciarMedicamentos'
 import CadastroMedicamento from './pages/CadastroMedicamento'
 import Doacoes from './pages/Doacoes'
 import Despesas from './pages/Despesas'
 import LancarDespesa from './pages/LancarDespesa'
 import EstoqueEntradas from './pages/EstoqueEntradas'
 import EstoqueSaidas from './pages/EstoqueSaidas'
+import TitleHandler from "./components/TitleHandler";
 import './App.css'
 
 function App() {
   return (
     <Router>
+      <TitleHandler />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />

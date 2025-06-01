@@ -43,7 +43,7 @@ const Toast = ({ show, onClose, message, type = 'success', duration = 3000 }) =>
   };
 
   return (
-    <div 
+    <div
       style={{
         position: 'fixed',
         top: '20px',
@@ -51,8 +51,8 @@ const Toast = ({ show, onClose, message, type = 'success', duration = 3000 }) =>
         zIndex: 9999
       }}
     >
-      <BootstrapToast 
-        show={visible} 
+      <BootstrapToast
+        show={visible}
         onClose={() => {
           setVisible(false);
           onClose && onClose();
