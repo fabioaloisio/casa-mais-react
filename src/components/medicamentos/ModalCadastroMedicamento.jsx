@@ -1,4 +1,4 @@
-//Aldruin Bonfim de Lima Souza - RA 10482416915
+//Aldruin Bonfim de Lima Souza - ra 10482416915
 import React, { useState } from 'react';
 import './modal.css';
 import { FaRegCalendarAlt } from 'react-icons/fa';
