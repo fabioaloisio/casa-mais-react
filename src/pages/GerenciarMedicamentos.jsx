@@ -11,25 +11,27 @@ const GerenciarMedicamentos = () => {
   const [tipoFiltro, setTipoFiltro] = useState('todos');
   const [nomeFiltro, setNomeFiltro] = useState('');
 
-  const [medicamentos, setMedicamentos] = useState(() => {
-    const dadosSalvos = MedicamentoService.obterTodos();
-    return dadosSalvos.length > 0 ? dadosSalvos : [
-      { id: 1, nome: 'Paracetamol 750mg com 20 Comprimidos Genérico EMS', tipo: 'Comprimido', quantidade: 10, validade: '10/2026' },
-      { id: 2, nome: 'Dipirona 500mg 10 Comprimidos EMS', tipo: 'Comprimido', quantidade: 15, validade: '08/2026' },
-      { id: 3, nome: 'Amoxicilina 500mg 21 Cápsulas', tipo: 'Cápsula', quantidade: 8, validade: '12/2025' },
-      { id: 4, nome: 'Nimesulida 100mg 12 Comprimidos', tipo: 'Comprimido', quantidade: 5, validade: '05/2026' },
-      { id: 5, nome: 'Ibuprofeno 50mg/mL Gotas 20mL', tipo: 'Gotas', quantidade: 2, validade: '09/2025' },
-      { id: 6, nome: 'Loratadina 10mg 12 Comprimidos', tipo: 'Comprimido', quantidade: 7, validade: '04/2027' },
-      { id: 7, nome: 'Xarope de Guaco 100ml Herbarium', tipo: 'Xarope', quantidade: 3, validade: '02/2025' },
-      { id: 8, nome: 'Xarope Vick Mel 120ml', tipo: 'Xarope', quantidade: 2, validade: '01/2025' },
-      { id: 9, nome: 'Nebacetin Pomada 15g', tipo: 'Pomada', quantidade: 1, validade: '11/2025' },
-      { id: 10, nome: 'Andolba Creme para Dores Musculares 60g', tipo: 'Pomada', quantidade: 1, validade: '06/2026' },
-    ];
-  });
+  const [medicamentos, setMedicamentos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    MedicamentoService.salvarTodos(medicamentos);
-  }, [medicamentos]);
+    carregarMedicamentos();
+  }, []);
+
+  const carregarMedicamentos = async () => {
+    try {
+      setLoading(true);
+      const dados = await MedicamentoService.obterTodos();
+      setMedicamentos(dados);
+      setError(null);
+    } catch (err) {
+      console.error('Erro ao carregar medicamentos:', err);
+      setError('Erro ao carregar medicamentos. Verifique se o servidor está rodando.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [isModalCadastroOpen, setIsModalCadastroOpen] = useState(false);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
@@ -57,22 +59,46 @@ const GerenciarMedicamentos = () => {
     setMedSelecionado(null);
   };
 
-  const handleCadastrar = (novoMedicamento) => {
-    const novoId = medicamentos.length > 0 ? Math.max(...medicamentos.map(m => m.id)) + 1 : 1;
-    setMedicamentos([...medicamentos, { ...novoMedicamento, id: novoId }]);
-    setIsModalCadastroOpen(false);
+  const handleCadastrar = async (novoMedicamento) => {
+    try {
+      const response = await MedicamentoService.criar(novoMedicamento);
+      if (response.success) {
+        await carregarMedicamentos();
+        fecharModais();
+      } else {
+        alert('Erro ao cadastrar medicamento: ' + response.message);
+      }
+    } catch (error) {
+      alert('Erro ao cadastrar medicamento: ' + error.message);
+    }
   };
 
-  const salvarEdicao = (medAtualizado) => {
-    setMedicamentos((prev) =>
-      prev.map((med) => (med.id === medAtualizado.id ? medAtualizado : med))
-    );
-    fecharModais();
+  const salvarEdicao = async (medAtualizado) => {
+    try {
+      const response = await MedicamentoService.atualizar(medAtualizado.id, medAtualizado);
+      if (response.success) {
+        await carregarMedicamentos();
+        fecharModais();
+      } else {
+        alert('Erro ao atualizar medicamento: ' + response.message);
+      }
+    } catch (error) {
+      alert('Erro ao atualizar medicamento: ' + error.message);
+    }
   };
 
-  const confirmarExclusao = () => {
-    setMedicamentos((prev) => prev.filter((med) => med.id !== medSelecionado.id));
-    fecharModais();
+  const confirmarExclusao = async () => {
+    try {
+      const response = await MedicamentoService.excluir(medSelecionado.id);
+      if (response.success) {
+        await carregarMedicamentos();
+        fecharModais();
+      } else {
+        alert('Erro ao excluir medicamento: ' + response.message);
+      }
+    } catch (error) {
+      alert('Erro ao excluir medicamento: ' + error.message);
+    }
   };
 
   const medicamentosFiltrados = medicamentos.filter((med) => {
@@ -80,6 +106,31 @@ const GerenciarMedicamentos = () => {
     const filtroNome = med.nome.toLowerCase().includes(nomeFiltro.toLowerCase());
     return filtroTipo && filtroNome;
   });
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <h2 className="titulo">Gerenciar Medicamentos</h2>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <p>Carregando medicamentos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <h2 className="titulo">Gerenciar Medicamentos</h2>
+        <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
+          <p>{error}</p>
+          <button onClick={carregarMedicamentos} style={{ marginTop: '10px' }}>
+            Tentar Novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">

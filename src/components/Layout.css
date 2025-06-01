@@ -7,12 +7,32 @@
   flex: 1;
   background-color: var(--bg-light);
   min-height: 100vh;
-  margin-left: 220px;
-  padding: 20px;
+  margin-left: 250px;
+  padding: 2rem;
+  transition: margin-left 0.3s ease;
 }
 
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 220px;
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile (< 768px) */
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;
+    padding: 1rem;
+    padding-top: 4rem; /* Espaço para o botão hambúrguer */
+  }
+}
+
+/* Mobile pequeno (< 576px) */
+@media (max-width: 576px) {
+  .main-content {
+    padding: 0.75rem;
+    padding-top: 3.5rem;
   }
 }

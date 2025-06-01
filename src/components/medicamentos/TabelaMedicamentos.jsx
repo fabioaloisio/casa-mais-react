@@ -2,6 +2,15 @@
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const TabelaMedicamentos = ({ medicamentos, onEditar, onExcluir }) => {
+  // Função para formatar data
+  const formatarData = (dataString) => {
+    if (!dataString) return '';
+    const data = new Date(dataString);
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  };
   return (
     <div className="tabela-container ">
       <table className="tabela">
@@ -21,7 +30,7 @@ const TabelaMedicamentos = ({ medicamentos, onEditar, onExcluir }) => {
                 <td>{med.nome}</td>
                 <td>{med.tipo}</td>
                 <td>{med.quantidade}</td>
-                <td>{med.validade}</td>
+                <td>{formatarData(med.validade)}</td>
                 <td>
                   <div>
                     <button

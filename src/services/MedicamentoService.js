@@ -1,14 +1,60 @@
 //Aldruin Bonfim de Lima Souza - RA 10482416915
 
-const CHAVE_STORAGE = 'medicamentos';
+import apiService from './api';
 
 export const MedicamentoService = {
-  obterTodos: () => {
-    const dados = localStorage.getItem(CHAVE_STORAGE);
-    return dados ? JSON.parse(dados) : [];
+  obterTodos: async () => {
+    try {
+      const response = await apiService.get('/medicamentos');
+      return response.success ? response.data : [];
+    } catch (error) {
+      console.error('Erro ao buscar medicamentos:', error);
+      throw new Error('Erro ao carregar medicamentos. Tente novamente.');
+    }
   },
 
-  salvarTodos: (medicamentos) => {
-    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(medicamentos));
+  obterPorId: async (id) => {
+    try {
+      const response = await apiService.get(`/medicamentos/${id}`);
+      return response.success ? response.data : null;
+    } catch (error) {
+      console.error('Erro ao buscar medicamento:', error);
+      throw new Error('Erro ao carregar medicamento. Tente novamente.');
+    }
   },
+
+  criar: async (medicamento) => {
+    try {
+      const response = await apiService.post('/medicamentos', medicamento);
+      return response;
+    } catch (error) {
+      console.error('Erro ao criar medicamento:', error);
+      throw new Error('Erro ao criar medicamento. Tente novamente.');
+    }
+  },
+
+  atualizar: async (id, medicamento) => {
+    try {
+      const response = await apiService.put(`/medicamentos/${id}`, medicamento);
+      return response;
+    } catch (error) {
+      console.error('Erro ao atualizar medicamento:', error);
+      throw new Error('Erro ao atualizar medicamento. Tente novamente.');
+    }
+  },
+
+  excluir: async (id) => {
+    try {
+      const response = await apiService.delete(`/medicamentos/${id}`);
+      return response;
+    } catch (error) {
+      console.error('Erro ao excluir medicamento:', error);
+      throw new Error('Erro ao excluir medicamento. Tente novamente.');
+    }
+  },
+
+  // Método mantido para compatibilidade mas não é mais usado
+  salvarTodos: (medicamentos) => {
+    console.warn('salvarTodos está obsoleto. Use a API.');
+  }
 };

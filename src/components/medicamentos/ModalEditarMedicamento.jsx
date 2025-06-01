@@ -15,12 +15,19 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
 
   useEffect(() => {
     if (medicamento) {
-      // Converter validade de DD/MM/YYYY para YYYY-MM
+      // Converter validade para formato de input date (YYYY-MM-DD)
       let validadeFormatada = '';
       if (medicamento.validade) {
-        const [mes, ano] = medicamento.validade.split('/');
-        if (mes && ano) {
-          validadeFormatada = `${ano}-${mes.padStart(2, '0')}`;
+        // Se vier do backend como ISO string
+        if (medicamento.validade.includes('T')) {
+          validadeFormatada = medicamento.validade.split('T')[0];
+        } 
+        // Se vier no formato DD/MM/YYYY
+        else if (medicamento.validade.includes('/')) {
+          const [dia, mes, ano] = medicamento.validade.split('/');
+          if (dia && mes && ano) {
+            validadeFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+          }
         }
       }
       
@@ -165,11 +172,11 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
           <Form.Group>
             <Form.Label>Validade *</Form.Label>
             <Form.Control
-              type="month"
+              type="date"
               name="validade"
               value={formData.validade}
               onChange={handleInputChange}
-              min={new Date().toISOString().slice(0, 7)}
+              min={new Date().toISOString().slice(0, 10)}
               isInvalid={!!errors.validade}
             />
             <Form.Control.Feedback type="invalid">

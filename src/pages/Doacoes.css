@@ -77,6 +77,8 @@
   overflow-x: auto;
   border-radius: 7px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .tabela-assistidas {
@@ -84,6 +86,7 @@
   border-collapse: collapse;
   background-color: #fff;
   margin-bottom: 0;
+  min-width: 600px; /* Garante largura mínima para tabela */
 }
 
 .tabela-assistidas th,
@@ -98,6 +101,7 @@
   color: #fff !important;
   font-weight: 600;
   border-bottom: none;
+  white-space: nowrap;
 }
 
 .tabela-assistidas tr:hover {
@@ -136,6 +140,7 @@
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .azul:hover {
@@ -159,22 +164,153 @@
   font-size: 0.875rem !important;
 } 
 
-/* Responsividade */
-@media (max-width: 768px) {
+/* Responsividade - Tablet */
+@media (max-width: 1024px) {
   .conteudo {
-    padding: 20px;
+    padding: 25px;
+  }
+  
+  .topo h1 {
+    font-size: 22px;
   }
   
   .filtros {
-    flex-direction: column;
-    align-items: stretch;
+    flex-wrap: wrap;
   }
   
   #filtroUsuario {
+    width: 250px;
+  }
+  
+  .filtros select {
+    width: auto;
+    min-width: 120px;
+  }
+}
+
+/* Responsividade - Mobile */
+@media (max-width: 768px) {
+  .conteudo {
+    padding: 15px;
+  }
+  
+  .topo h1 {
+    font-size: 20px;
+  }
+  
+  .topo p {
+    font-size: 13px;
+  }
+  
+  /* Filtros em coluna no mobile */
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .filtros label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  #filtroUsuario,
+  .filtros select {
     width: 100%;
   }
   
+  /* Stats cards responsivos */
   .stats-card {
     margin-bottom: 1rem;
+  }
+  
+  .stats-card h6 {
+    font-size: 0.8rem;
+  }
+  
+  .stats-card h3 {
+    font-size: 1.5rem;
+  }
+  
+  /* Tabela com scroll horizontal */
+  .tabela-container {
+    margin: 0 -15px; /* Estende até as bordas */
+    padding: 0 15px;
+    border-radius: 0;
+  }
+  
+  .tabela-assistidas th,
+  .tabela-assistidas td {
+    padding: 10px 12px;
+    font-size: 0.875rem;
+  }
+  
+  /* Botões menores no mobile */
+  .azul {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+  }
+  
+  /* Ajuste nos botões de ação */
+  .btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+  .conteudo {
+    padding: 10px;
+  }
+  
+  .topo h1 {
+    font-size: 18px;
+  }
+  
+  .topo p {
+    font-size: 12px;
+    line-height: 150%;
+  }
+  
+  /* Cards em coluna única */
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  .col-md-4 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  /* Tabela ainda menor */
+  .tabela-assistidas th,
+  .tabela-assistidas td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+  
+  /* Indicador de scroll */
+  .tabela-container::after {
+    content: '→ Deslize para ver mais';
+    display: block;
+    text-align: center;
+    padding: 10px;
+    color: #666;
+    font-size: 0.75rem;
+  }
+  
+  .tabela-container::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .tabela-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .tabela-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
   }
 }

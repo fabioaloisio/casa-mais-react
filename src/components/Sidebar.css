@@ -10,6 +10,7 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease;
 }
 
 .logo-container {
@@ -107,13 +108,115 @@
   flex-shrink: 0;
 }
 
+/* Botão hambúrguer para mobile */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background-color: #1a2332;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  background-color: #2a3342;
+}
+
+.menu-toggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Overlay para mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+  
+  .menu > .nav-link {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+  }
+  
+  .menu-section {
+    margin: 0 0.7rem 0.9rem;
+  }
+  
+  .menu-section .nav-link {
+    font-size: 0.85rem;
+  }
+}
+
+/* Mobile (< 768px) */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    width: 280px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
   }
 
   .sidebar.open {
     transform: translateX(0);
+  }
+  
+  .menu-toggle {
+    display: block;
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+  
+  /* Aumentar tamanho para toque */
+  .menu > .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .menu-section .nav-link {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  .menu .nav-link svg,
+  .menu-section .nav-link svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Mobile pequeno (< 576px) */
+@media (max-width: 576px) {
+  .sidebar {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .logo-container {
+    padding: 1.5rem 1rem;
   }
 }

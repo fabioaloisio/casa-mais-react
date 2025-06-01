@@ -7,10 +7,11 @@ Interface web do sistema de gestão para a organização social Casa de Lázaro 
 - **React 19.1.0** - Biblioteca para construção de interfaces
 - **Vite 6.3.5** - Build tool com HMR (Hot Module Replacement)
 - **React Router DOM 7.6.1** - Roteamento de páginas
-- **Bootstrap 5.3.6** + **React Bootstrap 2.10.10** - Framework UI
+- **Bootstrap 5.3.6** + **React Bootstrap 2.10.10** - Framework UI responsivo
 - **React Icons 5.5.0** - Ícones (Font Awesome)
 - **React Input Mask 2.0.4** - Máscaras de input
 - **PropTypes 15.8.1** - Validação de tipos
+- **Design Responsivo** - Mobile-first com breakpoints para tablet e desktop
 
 ## 📦 Instalação
 
@@ -18,8 +19,8 @@ Interface web do sistema de gestão para a organização social Casa de Lázaro 
 # Instalar dependências
 npm install
 
-# Configurar variáveis de ambiente (já existe .env.example)
-cp .env.example .env
+# Configurar variáveis de ambiente
+echo "VITE_API_URL=http://localhost:3003/api" > .env
 
 # Iniciar servidor de desenvolvimento
 npm run dev
@@ -46,15 +47,15 @@ src/
 │   ├── medicamentos/   # Componentes de medicamentos
 │   └── usuarios/       # Componentes de usuários
 ├── pages/              # Páginas da aplicação
-├── services/           # Camada de serviços (API + migração localStorage)
+├── services/           # Camada de serviços (API)
 │   ├── api.js         # Cliente HTTP genérico
-│   └── doacoesService.js # Serviço de doações integrado com API
+│   ├── doacoesService.js # Serviço de doações integrado com API
+│   └── MedicamentoService.js # Serviço de medicamentos integrado com API
 ├── config/             # Configurações da aplicação
 │   └── api.js         # Configuração da API (URL, timeout, headers)
 ├── utils/              # Funções utilitárias
 │   ├── masks.js       # Máscaras de formatação
-│   ├── validations.js # Validações de formulário
-│   └── sampleData.js  # Dados de exemplo
+│   └── validations.js # Validações de formulário
 └── styles/             # Estilos globais
 ```
 
@@ -75,6 +76,7 @@ O projeto utiliza um sistema padronizado de modais com componentes base reutiliz
 - ✅ Loading states
 - ✅ Validação de formulários
 - ✅ Acessibilidade (ARIA)
+- ✅ Layout responsivo para mobile e tablet
 
 ## 🔄 Integração com Backend
 
@@ -83,10 +85,11 @@ O projeto utiliza um sistema padronizado de modais com componentes base reutiliz
 ### Configuração da API
 
 ```bash
-# Arquivo .env
-REACT_APP_API_URL=http://localhost:3003/api
-NODE_ENV=development
+# Arquivo .env (Vite usa VITE_ como prefixo)
+VITE_API_URL=http://localhost:3003/api
 ```
+
+**⚠️ Importante**: Use o prefixo `VITE_` para variáveis de ambiente acessíveis no cliente.
 
 ### Serviços Disponíveis
 
@@ -98,9 +101,9 @@ NODE_ENV=development
 
 - ✅ Comunicação HTTP com retry automático
 - ✅ Loading states e error handling
-- ✅ Migração automática do localStorage para API
 - ✅ CORS configurado
 - ✅ Validação de dados no cliente e servidor
+- ✅ Formatação automática de datas (DD/MM/YYYY)
 
 ### Como Usar
 
@@ -116,6 +119,32 @@ npm run dev
 Backend estará em: `http://localhost:3003`  
 Frontend estará em: `http://localhost:5173`
 
+## 📱 Design Responsivo
+
+### Breakpoints
+
+- **Mobile**: < 768px
+- **Tablet**: 768px - 1024px  
+- **Desktop**: > 1024px
+
+### Recursos Mobile
+
+- ✅ **Navegação móvel** com menu hambúrguer
+- ✅ **Tabelas responsivas** com scroll horizontal
+- ✅ **Touch-friendly** - alvos de toque ≥ 44px
+- ✅ **Formulários otimizados** para mobile
+- ✅ **Cards adaptáveis** em layouts de grid
+- ✅ **Overlay semitransparente** para navegação
+
+### Componentes Responsivos
+
+| Componente | Mobile | Tablet | Desktop |
+|-----------|--------|--------|---------|
+| Sidebar | Menu hambúrguer + overlay | Sidebar menor | Sidebar completa |
+| Tabelas | Scroll horizontal | Scroll horizontal | Largura completa |
+| Formulários | Layout vertical | Layout misto | Layout horizontal |
+| Cards | Coluna única | Grid 2 colunas | Grid 3+ colunas |
+
 ## 🛠️ Desenvolvimento
 
 ### Padrões de Código
@@ -125,13 +154,15 @@ Frontend estará em: `http://localhost:5173`
 - ESLint para linting
 - Nomes de componentes em PascalCase
 - Arquivos de componentes com extensão `.jsx`
+- CSS modules ou classes específicas para componentes
 
 ### Fluxo de Trabalho
 
 1. Criar branch para nova feature
 2. Desenvolver e testar localmente
-3. Executar `npm run lint` antes do commit
-4. Criar pull request para review
+3. Testar responsividade em diferentes dispositivos
+4. Executar `npm run lint` antes do commit
+5. Criar pull request para review
 
 ## 📋 Módulos Principais
 

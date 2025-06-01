@@ -32,6 +32,7 @@
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s ease, transform 0.1s ease;
+    white-space: nowrap;
 }
 
 .btn-cadastrar:hover {
@@ -72,6 +73,7 @@
     overflow-x: auto;
     border-radius: 12px;
     background-color: white;
+    -webkit-overflow-scrolling: touch;
 }
 
 .tabela {
@@ -83,10 +85,11 @@
 .tabela th {
     background-color: #f1f5f9;
     padding: 1rem;
-    font-weight: 00;
+    font-weight: 600;
     color: #334155;
-    text-align: justify;
+    text-align: left;
     border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
 }
 
 .tabela th:last-child {
@@ -122,6 +125,7 @@
     cursor: pointer;
     font-size: 0.9rem;
     transition: background-color 0.2s, transform 0.1s;
+    white-space: nowrap;
 }
 
 .btn-editar {
@@ -144,7 +148,7 @@
 }
 
 .btn-excluir:hover {
-    border: 1px solid #c53030(173, 2, 2);
+    border: 1px solid #c53030;
     background-color: #c53030;
     color: #ffffff;
 }
@@ -154,4 +158,183 @@
     padding: 1rem;
     color: #64748b;
     font-style: italic;
+}
+
+/* Responsividade - Tablet */
+@media (max-width: 1024px) {
+    .page-container {
+        padding: 20px;
+    }
+    
+    .titulo {
+        font-size: 1.6rem;
+    }
+    
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .filtros {
+        justify-content: center;
+    }
+    
+    .select-filtro,
+    .input-filtro {
+        min-width: 150px;
+    }
+    
+    .input-filtro {
+        width: 200px;
+    }
+}
+
+/* Responsividade - Mobile */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .titulo {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+    
+    .top-bar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn-cadastrar {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .filtros {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .select-filtro,
+    .input-filtro {
+        width: 100%;
+        min-width: unset;
+        padding: 0.75rem;
+        font-size: 16px; /* Previne zoom no iOS */
+    }
+    
+    /* Tabela com scroll */
+    .tabela-container {
+        margin: 0 -15px;
+        padding: 0 15px;
+        border-radius: 8px;
+    }
+    
+    .tabela {
+        min-width: 600px;
+    }
+    
+    .tabela th,
+    .tabela td {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Botões menores */
+    .btn-editar,
+    .btn-excluir {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        margin-right: 4px;
+    }
+    
+    .btn-editar {
+        padding: 8px 12px;
+    }
+    
+    /* Estados de loading e erro */
+    .loading-state,
+    .error-state {
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+    
+    .error-state button {
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        width: 100%;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+    .page-container {
+        padding: 10px;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .titulo {
+        font-size: 1.3rem;
+    }
+    
+    .tabela-container {
+        margin: 0 -10px;
+        padding: 0 10px;
+    }
+    
+    .tabela {
+        min-width: 500px;
+    }
+    
+    .tabela th,
+    .tabela td {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Indicador de scroll */
+    .tabela-container::after {
+        content: '→ Deslize para ver mais';
+        display: block;
+        text-align: center;
+        padding: 10px;
+        color: #666;
+        font-size: 0.75rem;
+        background-color: #f8f9fa;
+    }
+    
+    /* Scrollbar customizada */
+    .tabela-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .tabela-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    
+    .tabela-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    
+    .tabela-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    
+    /* Botões ainda menores */
+    .btn-editar,
+    .btn-excluir {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 6px;
+    }
+    
+    .btn-editar {
+        padding: 6px 10px;
+    }
 }

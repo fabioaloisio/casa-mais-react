@@ -149,11 +149,11 @@ const ModalCadastroMedicamento = ({ isOpen, onClose, onCadastrar }) => {
           <Form.Group>
             <Form.Label>Validade *</Form.Label>
             <Form.Control
-              type="month"
+              type="date"
               name="validade"
               value={formData.validade}
               onChange={handleInputChange}
-              min={new Date().toISOString().slice(0, 7)}
+              min={new Date().toISOString().slice(0, 10)}
               isInvalid={!!errors.validade}
             />
             <Form.Control.Feedback type="invalid">
