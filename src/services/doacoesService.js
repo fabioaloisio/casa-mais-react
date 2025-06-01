@@ -1,71 +1,166 @@
-const STORAGE_KEY = 'casa_mais_doacoes';
+import apiService from './api';
 
 class DoacoesService {
   // Obter todas as doações
-  getAll() {
-    const doacoes = localStorage.getItem(STORAGE_KEY);
-    return doacoes ? JSON.parse(doacoes) : [];
+  async getAll(filtros = {}) {
+    try {
+      const response = await apiService.get('/doacoes', filtros);
+      return response.success ? response.data : [];
+    } catch (error) {
+      console.error('Erro ao buscar doações:', error);
+      throw new Error('Erro ao carregar doações. Tente novamente.');
+    }
   }
 
   // Obter doação por ID
-  getById(id) {
-    const doacoes = this.getAll();
-    return doacoes.find(doacao => doacao.id === id);
+  async getById(id) {
+    try {
+      const response = await apiService.get(`/doacoes/${id}`);
+      return response.success ? response.data : null;
+    } catch (error) {
+      console.error('Erro ao buscar doação:', error);
+      if (error.message.includes('404')) {
+        return null;
+      }
+      throw new Error('Erro ao carregar doação. Tente novamente.');
+    }
+  }
+
+  // Buscar doações por doador
+  async getByDoador(documento) {
+    try {
+      const response = await apiService.get(`/doacoes/doador/${documento}`);
+      return response.success ? response.data : [];
+    } catch (error) {
+      console.error('Erro ao buscar doações do doador:', error);
+      throw new Error('Erro ao carregar doações do doador. Tente novamente.');
+    }
   }
 
   // Criar nova doação
-  create(doacao) {
-    const doacoes = this.getAll();
-    const newDoacao = {
-      ...doacao,
-      id: Date.now().toString(),
-      dataCadastro: new Date().toISOString()
-    };
-    doacoes.push(newDoacao);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(doacoes));
-    return newDoacao;
+  async create(doacao) {
+    try {
+      const response = await apiService.post('/doacoes', doacao);
+      if (response.success) {
+        return response.data;
+      }
+      throw new Error(response.message || 'Erro ao criar doação');
+    } catch (error) {
+      console.error('Erro ao criar doação:', error);
+      // Se a resposta contém erros de validação, lançar com detalhes
+      if (error.message.includes('Dados inválidos')) {
+        throw error;
+      }
+      throw new Error('Erro ao salvar doação. Verifique os dados e tente novamente.');
+    }
   }
 
   // Atualizar doação
-  update(id, doacaoData) {
-    const doacoes = this.getAll();
-    const index = doacoes.findIndex(doacao => doacao.id === id);
-    
-    if (index !== -1) {
-      doacoes[index] = {
-        ...doacoes[index],
-        ...doacaoData,
-        id,
-        dataAtualizacao: new Date().toISOString()
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(doacoes));
-      return doacoes[index];
+  async update(id, doacaoData) {
+    try {
+      const response = await apiService.put(`/doacoes/${id}`, doacaoData);
+      if (response.success) {
+        return response.data;
+      }
+      throw new Error(response.message || 'Erro ao atualizar doação');
+    } catch (error) {
+      console.error('Erro ao atualizar doação:', error);
+      if (error.message.includes('404')) {
+        throw new Error('Doação não encontrada.');
+      }
+      if (error.message.includes('Dados inválidos')) {
+        throw error;
+      }
+      throw new Error('Erro ao atualizar doação. Tente novamente.');
     }
-    return null;
   }
 
   // Deletar doação
-  delete(id) {
-    const doacoes = this.getAll();
-    const filteredDoacoes = doacoes.filter(doacao => doacao.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredDoacoes));
-    return filteredDoacoes.length < doacoes.length;
+  async delete(id) {
+    try {
+      const response = await apiService.delete(`/doacoes/${id}`);
+      return response.success;
+    } catch (error) {
+      console.error('Erro ao deletar doação:', error);
+      if (error.message.includes('404')) {
+        throw new Error('Doação não encontrada.');
+      }
+      throw new Error('Erro ao excluir doação. Tente novamente.');
+    }
   }
 
   // Obter estatísticas
-  getStats() {
-    const doacoes = this.getAll();
-    const total = doacoes.reduce((sum, doacao) => sum + parseFloat(doacao.valor || 0), 0);
-    const totalPF = doacoes.filter(d => d.tipoDoador === 'PF').length;
-    const totalPJ = doacoes.filter(d => d.tipoDoador === 'PJ').length;
-    
-    return {
-      totalDoacoes: doacoes.length,
-      valorTotal: total,
-      totalPessoaFisica: totalPF,
-      totalPessoaJuridica: totalPJ
-    };
+  async getStats(filtros = {}) {
+    try {
+      const response = await apiService.get('/doacoes/estatisticas', filtros);
+      if (response.success) {
+        const stats = response.data;
+        return {
+          totalDoacoes: stats.totalDoacoes || 0,
+          valorTotal: stats.valorTotal || 0,
+          totalPessoaFisica: stats.doacoesPorTipo?.find(t => t.tipo_doador === 'PF')?.quantidade || 0,
+          totalPessoaJuridica: stats.doacoesPorTipo?.find(t => t.tipo_doador === 'PJ')?.quantidade || 0,
+          ultimaDoacao: stats.ultimaDoacao
+        };
+      }
+      return {
+        totalDoacoes: 0,
+        valorTotal: 0,
+        totalPessoaFisica: 0,
+        totalPessoaJuridica: 0
+      };
+    } catch (error) {
+      console.error('Erro ao buscar estatísticas:', error);
+      throw new Error('Erro ao carregar estatísticas. Tente novamente.');
+    }
   }
 }
 
-export default new DoacoesService();
+// Instancia singleton mantendo compatibilidade
+const doacoesService = new DoacoesService();
+
+// Métodos de compatibilidade para código existente que pode ainda usar localStorage
+const STORAGE_KEY = 'casa_mais_doacoes';
+
+// Migração automática de dados do localStorage (executa apenas uma vez)
+let migrationDone = false;
+
+const migrarDadosLocalStorage = async () => {
+  if (migrationDone) return;
+  
+  try {
+    const dadosLocais = localStorage.getItem(STORAGE_KEY);
+    if (dadosLocais) {
+      const doacoes = JSON.parse(dadosLocais);
+      
+      if (doacoes.length > 0) {
+        console.log('Migrando', doacoes.length, 'doações do localStorage para a API...');
+        
+        for (const doacao of doacoes) {
+          try {
+            // Remove o ID local pois a API vai gerar um novo
+            const { id, ...doacaoSemId } = doacao;
+            await doacoesService.create(doacaoSemId);
+          } catch (error) {
+            console.warn('Erro ao migrar doação:', error);
+          }
+        }
+        
+        // Backup dos dados locais e limpa localStorage
+        localStorage.setItem(STORAGE_KEY + '_backup', dadosLocais);
+        localStorage.removeItem(STORAGE_KEY);
+        
+        console.log('Migração concluída! Dados locais foram movidos para _backup.');
+      }
+    }
+  } catch (error) {
+    console.warn('Erro durante migração:', error);
+  } finally {
+    migrationDone = true;
+  }
+};
+
+// Executa migração quando o módulo é carregado
+migrarDadosLocalStorage();
+
+export default doacoesService;

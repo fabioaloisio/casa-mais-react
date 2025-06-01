@@ -6,7 +6,6 @@ import { formatCPF, formatCNPJ, formatCurrency } from '../utils/masks';
 import DoacaoModal from '../components/doacoes/DoacaoModal';
 import ConfirmDeleteModal from '../components/doacoes/ConfirmDeleteModal';
 import Toast from '../components/common/Toast';
-import { initializeSampleData } from '../utils/sampleData';
 import './Doacoes.css';
 
 const Doacoes = () => {
@@ -17,6 +16,8 @@ const Doacoes = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [doacaoToDelete, setDoacaoToDelete] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   
   const [stats, setStats] = useState({
     totalDoacoes: 0,
@@ -27,14 +28,26 @@ const Doacoes = () => {
 
   // Carregar doações ao montar o componente
   useEffect(() => {
-    initializeSampleData(); // Inicializar com dados de exemplo se necessário
     loadDoacoes();
   }, []);
 
-  const loadDoacoes = () => {
-    const allDoacoes = doacoesService.getAll();
-    setDoacoes(allDoacoes);
-    setStats(doacoesService.getStats());
+  const loadDoacoes = async () => {
+    try {
+      setLoading(true);
+      const allDoacoes = await doacoesService.getAll();
+      const statsData = await doacoesService.getStats();
+      setDoacoes(allDoacoes);
+      setStats(statsData);
+    } catch (error) {
+      setToast({
+        show: true,
+        message: 'Erro ao carregar doações. Verifique sua conexão.',
+        type: 'danger'
+      });
+      console.error('Erro ao carregar doações:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleShowModal = (doacao = null) => {
@@ -47,37 +60,34 @@ const Doacoes = () => {
     setDoacaoEdit(null);
   };
 
-  const handleSaveDoacao = (doacaoData) => {
-    // Usar setTimeout para garantir que o feedback visual apareça
-    setTimeout(() => {
-      try {
-        if (doacaoEdit) {
-          doacoesService.update(doacaoEdit.id, doacaoData);
-          setToast({
-            show: true,
-            message: 'Doação atualizada com sucesso!',
-            type: 'success'
-          });
-        } else {
-          doacoesService.create(doacaoData);
-          setToast({
-            show: true,
-            message: 'Nova doação cadastrada com sucesso!',
-            type: 'success'
-          });
-        }
-        loadDoacoes();
-        handleCloseModal();
-      } catch (error) {
+  const handleSaveDoacao = async (doacaoData) => {
+    try {
+      if (doacaoEdit) {
+        await doacoesService.update(doacaoEdit.id, doacaoData);
         setToast({
           show: true,
-          message: 'Erro ao salvar doação. Tente novamente.',
-          type: 'warning'
+          message: 'Doação atualizada com sucesso!',
+          type: 'success'
         });
-        // Se houver erro, também fechar o modal para resetar o estado
-        handleCloseModal();
+      } else {
+        await doacoesService.create(doacaoData);
+        setToast({
+          show: true,
+          message: 'Nova doação cadastrada com sucesso!',
+          type: 'success'
+        });
       }
-    }, 500); // 500ms de delay para mostrar o feedback
+      await loadDoacoes();
+      handleCloseModal();
+    } catch (error) {
+      setToast({
+        show: true,
+        message: error.message || 'Erro ao salvar doação. Tente novamente.',
+        type: 'danger'
+      });
+      console.error('Erro ao salvar doação:', error);
+      // Não fechar o modal em caso de erro para permitir correção
+    }
   };
 
   const handleShowDeleteModal = (doacao) => {
@@ -90,23 +100,28 @@ const Doacoes = () => {
     setDoacaoToDelete(null);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (doacaoToDelete) {
       try {
-        doacoesService.delete(doacaoToDelete.id);
+        setDeleting(true);
+        await doacoesService.delete(doacaoToDelete.id);
         setToast({
           show: true,
           message: 'Doação excluída com sucesso!',
           type: 'success'
         });
-        loadDoacoes();
+        await loadDoacoes();
         handleCloseDeleteModal();
       } catch (error) {
         setToast({
           show: true,
-          message: 'Erro ao excluir doação. Tente novamente.',
-          type: 'warning'
+          message: error.message || 'Erro ao excluir doação. Tente novamente.',
+          type: 'danger'
         });
+        console.error('Erro ao excluir doação:', error);
+        handleCloseDeleteModal();
+      } finally {
+        setDeleting(false);
       }
     }
   };
@@ -219,12 +234,23 @@ const Doacoes = () => {
             </tr>
           </thead>
           <tbody>
-            {doacoesFiltradas.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="7" className="text-center py-4">
+                  <div className="d-flex justify-content-center align-items-center">
+                    <div className="spinner-border text-primary me-2" role="status">
+                      <span className="visually-hidden">Carregando...</span>
+                    </div>
+                    Carregando doações...
+                  </div>
+                </td>
+              </tr>
+            ) : doacoesFiltradas.length === 0 ? (
               <tr>
                 <td colSpan="7" className="text-center py-4">
                   <div className="text-muted">
-                    <p className="mb-0">Nenhuma doação cadastrada</p>
-                    <small>Clique em "Nova Doação" para começar</small>
+                    <p className="mb-0">Nenhuma doação encontrada</p>
+                    <small>Tente ajustar os filtros ou clique em "Nova Doação"</small>
                   </div>
                 </td>
               </tr>
