@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import TabelaMedicamentos from '../components/medicamentos/TabelaMedicamentos';
 import ModalCadastroMedicamento from '../components/medicamentos/ModalCadastroMedicamento';
 import ModalEditarMedicamento from '../components/medicamentos/ModalEditarMedicamento';
-import ModalConfirmacao from '../components/medicamentos/ModalConfirmacao';
+import ModalExclusaoMedicamento from '../components/medicamentos/ModalExclusaoMedicamento';
 import { MedicamentoService } from '../services/MedicamentoService';
 import './GerenciarMedicamentos.css';
 
@@ -138,8 +138,8 @@ const GerenciarMedicamentos = () => {
       )}
 
       {modalExcluirAberto && medSelecionado && (
-        <ModalConfirmacao
-          mensagem={`Deseja realmente excluir "${medSelecionado.nome}"?`}
+        <ModalExclusaoMedicamento
+          medicamento={medSelecionado}
           onClose={fecharModais}
           onConfirm={confirmarExclusao}
         />
