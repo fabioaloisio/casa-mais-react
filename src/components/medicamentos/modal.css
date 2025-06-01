@@ -1,0 +1,132 @@
+/* Aldruin Bonfim de Lima Souza - RA 10482416915 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+/* Modal */
+.modal {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 420px !important;
+  height: auto !important;
+  padding: 32px !important;
+  background: white !important;
+  z-index: 1000 !important;
+  display: block !important;
+  opacity: 1;
+  visibility: visible !important;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+/* Form */
+.modal label {
+  display: block;
+  margin-top: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.modal input {
+  background-color: #ffffff;
+  color: #0f172a;
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+
+.modal input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 12px;
+}
+
+input[type="month"] {
+  background: url('data:image/svg+xml;utf8,<svg fill="%233b82f6" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10h5v5H7z"/><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>') no-repeat right 10px center;
+  background-size: 20px 20px;
+  padding-right: 11px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+input[type="month"]:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  outline: none;
+}
+
+
+.modal-buttons button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.modal-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+.btn-salvar {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-salvar:hover {
+  background-color: #2563eb;
+}
+
+.btn-cancelar {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #dc2626;
+}
