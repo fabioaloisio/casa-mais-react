@@ -1,88 +1,174 @@
-//Aldruin Bonfim de Lima Souza - RA 10482416915
-import React, { useState, useEffect } from 'react';
-import './modal.css';
+import { useState, useEffect } from 'react';
+import { Form, Row, Col } from 'react-bootstrap';
+import FormModal from '../common/FormModal';
 
 const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
-  const [form, setForm] = useState({ ...medicamento });
-  const [erro, setErro] = useState('');
+  const [formData, setFormData] = useState({
+    nome: '',
+    tipo: '',
+    quantidade: '',
+    validade: ''
+  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setForm({ ...medicamento });
-    setErro('');
+    if (medicamento) {
+      // Converter validade de DD/MM/YYYY para YYYY-MM
+      let validadeFormatada = '';
+      if (medicamento.validade) {
+        const [mes, ano] = medicamento.validade.split('/');
+        if (mes && ano) {
+          validadeFormatada = `${ano}-${mes.padStart(2, '0')}`;
+        }
+      }
+      
+      setFormData({
+        ...medicamento,
+        validade: validadeFormatada
+      });
+      setErrors({});
+    }
   }, [medicamento]);
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!form.nome.trim()) {
-      setErro('O nome do medicamento é obrigatório.');
-      return;
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.nome.trim()) {
+      newErrors.nome = 'O nome do medicamento é obrigatório';
     }
-    if (!form.tipo.trim()) {
-      setErro('O tipo é obrigatório.');
-      return;
+    
+    if (!formData.tipo.trim()) {
+      newErrors.tipo = 'O tipo é obrigatório';
     }
-    if (!form.validade.trim()) {
-      setErro('A validade é obrigatória.');
-      return;
+    
+    if (!formData.quantidade || Number(formData.quantidade) < 0) {
+      newErrors.quantidade = 'A quantidade deve ser maior ou igual a zero';
     }
-    if (form.quantidade === '' || Number(form.quantidade) < 0) {
-      setErro('A quantidade deve ser um número maior ou igual a zero.');
-      return;
+    
+    if (!formData.validade) {
+      newErrors.validade = 'A validade é obrigatória';
     }
-
-    onSave(form);
+    
+    return newErrors;
   };
+
+  const handleSubmit = async (e) => {
+    const validationErrors = validateForm();
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Converter validade de volta para MM/YYYY
+    const validadeFormatada = formData.validade
+      ? formData.validade.split('-').reverse().join('/')
+      : '';
+
+    const medicamentoAtualizado = {
+      ...formData,
+      quantidade: Number(formData.quantidade),
+      validade: validadeFormatada
+    };
+
+    await onSave(medicamentoAtualizado);
+  };
+
+  if (!medicamento) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h3>Editar Medicamento</h3>
-        <form onSubmit={handleSubmit}>
-          <input
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
-            placeholder="Nome"
-          />
-          <input
-            name="tipo"
-            value={form.tipo}
-            onChange={handleChange}
-            placeholder="Tipo"
-          />
-          <input
-            name="quantidade"
-            value={form.quantidade}
-            onChange={handleChange}
-            placeholder="Quantidade"
-            type="number"
-          />
-          <input
-            name="validade"
-            value={form.validade}
-            onChange={handleChange}
-            placeholder="Validade"
-          />
+    <FormModal
+      show={true}
+      onHide={onClose}
+      onSubmit={handleSubmit}
+      title="Editar Medicamento"
+      size="md"
+      submitLabel="Salvar"
+      validated={Object.keys(errors).length > 0}
+    >
+      <Row className="mb-3">
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label>Nome do Medicamento *</Form.Label>
+            <Form.Control
+              type="text"
+              name="nome"
+              value={formData.nome}
+              onChange={handleInputChange}
+              placeholder="Digite o nome do medicamento"
+              isInvalid={!!errors.nome}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.nome}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
 
-          {erro && <p className="erro">{erro}</p>}
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Tipo *</Form.Label>
+            <Form.Control
+              type="text"
+              name="tipo"
+              value={formData.tipo}
+              onChange={handleInputChange}
+              placeholder="Ex: Comprimido, Xarope, etc."
+              isInvalid={!!errors.tipo}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.tipo}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Quantidade *</Form.Label>
+            <Form.Control
+              type="number"
+              name="quantidade"
+              value={formData.quantidade}
+              onChange={handleInputChange}
+              placeholder="Informe a quantidade"
+              min="0"
+              isInvalid={!!errors.quantidade}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.quantidade}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
 
-          <div className="modal-buttons">
-            <button type="submit" className="btn-salvar">
-              Salvar
-            </button>
-            <button type="button" className="btn-cancelar" onClick={onClose}>
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <Row className="mb-3">
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label>Validade *</Form.Label>
+            <Form.Control
+              type="month"
+              name="validade"
+              value={formData.validade}
+              onChange={handleInputChange}
+              min={new Date().toISOString().slice(0, 7)}
+              isInvalid={!!errors.validade}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.validade}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
+    </FormModal>
   );
 };
 

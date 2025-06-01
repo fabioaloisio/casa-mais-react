@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Modal, Form, Button, Row, Col, Spinner } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
 import { validateDoacaoForm } from '../../utils/validations';
 import { maskCurrency, parseCurrency } from '../../utils/masks';
+import FormModal from '../common/FormModal';
 
 const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
   const [formData, setFormData] = useState({
@@ -175,8 +176,7 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
     setIsSubmitting(true);
 
     const validationErrors = validateDoacaoForm(formData);
@@ -194,22 +194,21 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
     };
 
     // Chamar onSave diretamente, sem try-catch
-    onSave(dataToSave);
+    await onSave(dataToSave);
+    setIsSubmitting(false);
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered>
-      <Modal.Header closeButton>
-        <Modal.Title>{doacao ? 'Editar Doação' : 'Nova Doação'}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {/* Debug temporário */}
-        {false && (
-          <div style={{ background: '#f0f0f0', padding: '10px', marginBottom: '10px', fontSize: '12px' }}>
-            <pre>{JSON.stringify(formData, null, 2)}</pre>
-          </div>
-        )}
-        <Form onSubmit={handleSubmit}>
+    <FormModal
+      show={show}
+      onHide={onHide}
+      onSubmit={handleSubmit}
+      title={doacao ? 'Editar Doação' : 'Nova Doação'}
+      size="lg"
+      loading={isSubmitting}
+      submitLabel={doacao ? 'Atualizar' : 'Cadastrar'}
+      validated={Object.keys(errors).length > 0}
+    >
           {/* Tipo de Doador e Data */}
           <Row className="mb-3">
             <Col md={6}>
@@ -351,23 +350,7 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
               </Form.Group>
             </Col>
           </Row>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Cancelar
-        </Button>
-        <Button 
-          variant="primary" 
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="d-flex align-items-center gap-2"
-        >
-          {isSubmitting && <Spinner animation="border" size="sm" />}
-          {isSubmitting ? 'Salvando...' : (doacao ? 'Atualizar' : 'Cadastrar')}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    </FormModal>
   );
 };
 

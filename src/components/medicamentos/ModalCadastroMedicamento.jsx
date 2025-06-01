@@ -1,100 +1,168 @@
-//Aldruin Bonfim de Lima Souza - ra 10482416915
-import React, { useState } from 'react';
-import './modal.css';
-import { FaRegCalendarAlt } from 'react-icons/fa';
+import { useState } from 'react';
+import { Form, Row, Col } from 'react-bootstrap';
+import FormModal from '../common/FormModal';
 
 const ModalCadastroMedicamento = ({ isOpen, onClose, onCadastrar }) => {
-  const [nome, setNome] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-  const [validade, setValidade] = useState('');
+  const [formData, setFormData] = useState({
+    nome: '',
+    tipo: '',
+    quantidade: '',
+    validade: ''
+  });
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
 
-    const validadeFormatada = validade
-      ? validade.split('-').reverse().join('/')
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.nome.trim()) {
+      newErrors.nome = 'Nome é obrigatório';
+    }
+    
+    if (!formData.tipo.trim()) {
+      newErrors.tipo = 'Tipo é obrigatório';
+    }
+    
+    if (!formData.quantidade || parseInt(formData.quantidade) <= 0) {
+      newErrors.quantidade = 'Quantidade deve ser maior que zero';
+    }
+    
+    if (!formData.validade) {
+      newErrors.validade = 'Validade é obrigatória';
+    }
+    
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    const validationErrors = validateForm();
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    const validadeFormatada = formData.validade
+      ? formData.validade.split('-').reverse().join('/')
       : '';
 
     const novoMedicamento = {
       id: Date.now(),
-      nome,
-      tipo,
-      quantidade: parseInt(quantidade),
+      nome: formData.nome,
+      tipo: formData.tipo,
+      quantidade: parseInt(formData.quantidade),
       validade: validadeFormatada,
     };
 
-    onCadastrar(novoMedicamento);
+    await onCadastrar(novoMedicamento);
     onClose();
 
-    setNome('');
-    setTipo('');
-    setQuantidade('');
-    setValidade('');
+    setFormData({
+      nome: '',
+      tipo: '',
+      quantidade: '',
+      validade: ''
+    });
+    setErrors({});
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>Cadastrar Medicamento</h2>
-        <form onSubmit={handleSubmit}>
-          <label>Nome:</label>
-          <input
-            type="text"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Digite o nome do medicamento"
-            required
-          />
+    <FormModal
+      show={isOpen}
+      onHide={onClose}
+      onSubmit={handleSubmit}
+      title="Cadastrar Medicamento"
+      size="md"
+      validated={Object.keys(errors).length > 0}
+    >
+      <Row className="mb-3">
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label>Nome do Medicamento *</Form.Label>
+            <Form.Control
+              type="text"
+              name="nome"
+              value={formData.nome}
+              onChange={handleInputChange}
+              placeholder="Digite o nome do medicamento"
+              isInvalid={!!errors.nome}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.nome}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
 
-          <label>Tipo:</label>
-          <input
-            type="text"
-            value={tipo}
-            onChange={(e) => setTipo(e.target.value)}
-            placeholder="Digite o tipo do medicamento"
-            required
-          />
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Tipo *</Form.Label>
+            <Form.Control
+              type="text"
+              name="tipo"
+              value={formData.tipo}
+              onChange={handleInputChange}
+              placeholder="Ex: Comprimido, Xarope, etc."
+              isInvalid={!!errors.tipo}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.tipo}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Quantidade *</Form.Label>
+            <Form.Control
+              type="number"
+              name="quantidade"
+              value={formData.quantidade}
+              onChange={handleInputChange}
+              placeholder="Informe a quantidade"
+              min="1"
+              isInvalid={!!errors.quantidade}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.quantidade}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
 
-          <label>Quantidade:</label>
-          <input
-            type="number"
-            value={quantidade}
-            onChange={(e) => setQuantidade(e.target.value)}
-            placeholder="Informe a quantidade"
-            required
-          />
-
-          <label>Validade:</label>
-          <input
-            type="month"
-            value={validade}
-            onChange={(e) => setValidade(e.target.value)}
-            required
-          />
-          <FaRegCalendarAlt
-            style={{
-              position: 'absolute',
-              right: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-              color: '#3b82f6',
-              fontSize: '20px',
-            }}
-          />
-
-          <div className="modal-buttons">
-            <button type="submit" className="btn-salvar">Cadastrar</button>
-            <button type="button" className="btn-cancelar" onClick={onClose}>
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <Row className="mb-3">
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label>Validade *</Form.Label>
+            <Form.Control
+              type="month"
+              name="validade"
+              value={formData.validade}
+              onChange={handleInputChange}
+              min={new Date().toISOString().slice(0, 7)}
+              isInvalid={!!errors.validade}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.validade}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
+    </FormModal>
   );
 };
 

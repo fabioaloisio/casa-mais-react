@@ -1,0 +1,81 @@
+/* Estilos padronizados para botões dos modais */
+
+/* Botão Cancelar - Cinza */
+.btn-modal-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-cancel:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.btn-modal-cancel:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Botão Primário - Azul */
+.btn-modal-primary {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-primary:hover:not(:disabled) {
+  background-color: #0b5ed7;
+}
+
+.btn-modal-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Botão Excluir - Vermelho */
+.btn-modal-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-danger:hover:not(:disabled) {
+  background-color: #bb2d3b;
+}
+
+.btn-modal-danger:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Botão Confirmar - Verde */
+.btn-modal-success {
+  background-color: #198754;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-success:hover:not(:disabled) {
+  background-color: #157347;
+}
+
+.btn-modal-success:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

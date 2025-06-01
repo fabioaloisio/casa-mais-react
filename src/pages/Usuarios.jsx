@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Table, Button, Form, Modal, Row, Col } from 'react-bootstrap'
+import { Table, Button, Form } from 'react-bootstrap'
 import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
+import UsuarioModal from '../components/usuarios/UsuarioModal'
+import ConfirmModal from '../components/common/ConfirmModal'
 import './Usuarios.css'
 
 function Usuarios() {
   const [showModal, setShowModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [filtro, setFiltro] = useState('')
-  const [formData, setFormData] = useState({
-    nome: '',
-    email: '',
-    senha: '',
-    tipo: ''
-  })
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState(null)
+  const [usuarioParaExcluir, setUsuarioParaExcluir] = useState(null)
 
   const [usuarios] = useState([
     {
@@ -35,21 +34,33 @@ function Usuarios() {
     }
   ])
 
-  const handleClose = () => setShowModal(false)
-  const handleShow = () => setShowModal(true)
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+  const handleClose = () => {
+    setShowModal(false)
+    setUsuarioSelecionado(null)
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Cadastrar usuário:', formData)
-    handleClose()
+  const handleShow = (usuario = null) => {
+    setUsuarioSelecionado(usuario)
+    setShowModal(true)
+  }
+
+  const handleSave = async (formData) => {
+    if (usuarioSelecionado) {
+      console.log('Atualizar usuário:', usuarioSelecionado.id, formData)
+    } else {
+      console.log('Cadastrar usuário:', formData)
+    }
+  }
+
+  const handleDeleteClick = (usuario) => {
+    setUsuarioParaExcluir(usuario)
+    setShowDeleteModal(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    console.log('Excluir usuário:', usuarioParaExcluir.id)
+    setShowDeleteModal(false)
+    setUsuarioParaExcluir(null)
   }
 
   const usuariosFiltrados = usuarios.filter(usuario => 
@@ -70,7 +81,7 @@ function Usuarios() {
       <div className="filtros mb-4">
         <Button 
           className="azul d-flex align-items-center gap-2"
-          onClick={handleShow}
+          onClick={() => handleShow()}
         >
           <FaPlus /> Novo Usuário
         </Button>
@@ -123,14 +134,14 @@ function Usuarios() {
                     <div className="d-flex gap-1">
                       <Button 
                         className="d-flex align-items-center gap-1 btn-outline-custom btn-sm fs-7"
-                        onClick={() => console.log('Editar', usuario.id)}
+                        onClick={() => handleShow(usuario)}
                       >
                         <FaEdit /> Editar
                       </Button>
                       <Button 
                         className="d-flex align-items-center gap-1 btn-sm fs-7"
                         variant="outline-danger"
-                        onClick={() => console.log('Excluir', usuario.id)}
+                        onClick={() => handleDeleteClick(usuario)}
                       >
                         <FaTrash /> Excluir
                       </Button>
@@ -143,69 +154,29 @@ function Usuarios() {
         </Table>
       </div>
 
-      <Modal show={showModal} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Cadastro de Usuário</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Nome Completo:</Form.Label>
-              <Form.Control
-                type="text"
-                name="nome"
-                value={formData.nome}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
+      <UsuarioModal
+        show={showModal}
+        onHide={handleClose}
+        onSave={handleSave}
+        usuario={usuarioSelecionado}
+      />
 
-            <Form.Group className="mb-3">
-              <Form.Label>E-mail:</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Senha:</Form.Label>
-              <Form.Control
-                type="password"
-                name="senha"
-                value={formData.senha}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Tipo de Usuário:</Form.Label>
-              <Form.Select
-                name="tipo"
-                value={formData.tipo}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Selecione</option>
-                <option value="Administrador">Administrador</option>
-                <option value="Operador">Operador</option>
-              </Form.Select>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancelar
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Cadastrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ConfirmModal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Excluir Usuário"
+        message="Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita."
+        variant="delete"
+        confirmLabel="Excluir"
+        details={usuarioParaExcluir && (
+          <>
+            <p className="mb-1"><strong>Nome:</strong> {usuarioParaExcluir.nome}</p>
+            <p className="mb-1"><strong>E-mail:</strong> {usuarioParaExcluir.email}</p>
+            <p className="mb-0"><strong>Tipo:</strong> {usuarioParaExcluir.tipo}</p>
+          </>
+        )}
+      />
     </div>
   )
 }
