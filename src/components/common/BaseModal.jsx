@@ -15,8 +15,8 @@ function BaseModal({
   cancelLabel = 'Cancelar',
   loading = false,
   closeButton = true,
-  backdrop = 'static',
-  keyboard = false,
+  backdrop = true,
+  keyboard = true,
   className = ''
 }) {
   return (

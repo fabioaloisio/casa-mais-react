@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
 import { validateDoacaoForm } from '../../utils/validations';
 import { maskCurrency, parseCurrency } from '../../utils/masks';
 import FormModal from '../common/FormModal';
+import useUnsavedChanges from '../common/useUnsavedChanges';
 
 const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [initialData, setInitialData] = useState({});
+  const { hasUnsavedChanges, confirmClose } = useUnsavedChanges(initialData, formData);
 
   useEffect(() => {
     if (show) {
@@ -25,7 +28,7 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
       setErrors({});
       
       if (doacao) {
-        setFormData({
+        const dadosIniciais = {
           tipoDoador: doacao.tipoDoador || 'PF',
           nomeDoador: doacao.nomeDoador || '',
           documento: doacao.documento || '',
@@ -38,9 +41,11 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
           valor: doacao.valor ? `R$ ${doacao.valor.toFixed(2).replace('.', ',')}` : '',
           dataDoacao: doacao.dataDoacao ? doacao.dataDoacao.split('T')[0] : new Date().toISOString().split('T')[0],
           observacoes: doacao.observacoes || ''
-        });
+        };
+        setFormData(dadosIniciais);
+        setInitialData(dadosIniciais);
       } else {
-        setFormData({
+        const dadosIniciais = {
           tipoDoador: 'PF',
           nomeDoador: '',
           documento: '',
@@ -49,7 +54,9 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
           valor: '',
           dataDoacao: new Date().toISOString().split('T')[0],
           observacoes: ''
-        });
+        };
+        setFormData(dadosIniciais);
+        setInitialData(dadosIniciais);
       }
     } else {
       // Quando o modal fecha, resetar estados
@@ -198,10 +205,14 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
     setIsSubmitting(false);
   };
 
+  const handleClose = () => {
+    confirmClose(onHide);
+  };
+
   return (
     <FormModal
       show={show}
-      onHide={onHide}
+      onHide={handleClose}
       onSubmit={handleSubmit}
       title={doacao ? 'Editar Doação' : 'Nova Doação'}
       size="lg"

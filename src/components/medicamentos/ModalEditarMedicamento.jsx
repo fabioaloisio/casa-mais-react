@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
 import FormModal from '../common/FormModal';
+import useUnsavedChanges from '../common/useUnsavedChanges';
 
 const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
     validade: ''
   });
   const [errors, setErrors] = useState({});
+  const [initialData, setInitialData] = useState({});
 
   useEffect(() => {
     if (medicamento) {
@@ -22,10 +24,12 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
         }
       }
       
-      setFormData({
+      const dadosIniciais = {
         ...medicamento,
         validade: validadeFormatada
-      });
+      };
+      setFormData(dadosIniciais);
+      setInitialData(dadosIniciais);
       setErrors({});
     }
   }, [medicamento]);
@@ -83,12 +87,18 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
     await onSave(medicamentoAtualizado);
   };
 
+  const { hasUnsavedChanges, confirmClose } = useUnsavedChanges(initialData, formData);
+
+  const handleClose = () => {
+    confirmClose(onClose);
+  };
+
   if (!medicamento) return null;
 
   return (
     <FormModal
       show={true}
-      onHide={onClose}
+      onHide={handleClose}
       onSubmit={handleSubmit}
       title="Editar Medicamento"
       size="md"

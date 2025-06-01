@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Form, Row, Col } from 'react-bootstrap'
 import FormModal from '../common/FormModal'
+import useUnsavedChanges from '../common/useUnsavedChanges'
 
 function UsuarioModal({ show, onHide, onSave, usuario }) {
   const [formData, setFormData] = useState({
@@ -10,24 +11,30 @@ function UsuarioModal({ show, onHide, onSave, usuario }) {
     tipo: ''
   })
   const [errors, setErrors] = useState({})
+  const [initialData, setInitialData] = useState({})
+  const { hasUnsavedChanges, confirmClose } = useUnsavedChanges(initialData, formData)
 
   useEffect(() => {
     if (show) {
       setErrors({})
       if (usuario) {
-        setFormData({
+        const dadosIniciais = {
           nome: usuario.nome || '',
           email: usuario.email || '',
           senha: '',
           tipo: usuario.tipo || ''
-        })
+        }
+        setFormData(dadosIniciais)
+        setInitialData(dadosIniciais)
       } else {
-        setFormData({
+        const dadosIniciais = {
           nome: '',
           email: '',
           senha: '',
           tipo: ''
-        })
+        }
+        setFormData(dadosIniciais)
+        setInitialData(dadosIniciais)
       }
     }
   }, [usuario, show])
@@ -85,10 +92,14 @@ function UsuarioModal({ show, onHide, onSave, usuario }) {
     onHide()
   }
 
+  const handleClose = () => {
+    confirmClose(onHide)
+  }
+
   return (
     <FormModal
       show={show}
-      onHide={onHide}
+      onHide={handleClose}
       onSubmit={handleSubmit}
       title={usuario ? 'Editar Usuário' : 'Cadastro de Usuário'}
       size="md"
