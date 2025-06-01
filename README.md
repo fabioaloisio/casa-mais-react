@@ -2,6 +2,11 @@
 
 Interface web do sistema de gestão para a organização social Casa de Lázaro de Betânia.
 
+## 📚 Repositórios
+
+- **Frontend React**: https://github.com/fabioaloisio/casa-mais-react
+- **Backend Node.js**: https://github.com/fabioaloisio/casa-mais-backend
+
 ## 🚀 Tecnologias
 
 - **React 19.1.0** - Biblioteca para construção de interfaces
@@ -13,7 +18,17 @@ Interface web do sistema de gestão para a organização social Casa de Lázaro 
 - **PropTypes 15.8.1** - Validação de tipos
 - **Design Responsivo** - Mobile-first com breakpoints para tablet e desktop
 
-## 📦 Instalação
+## 🚀 Início Rápido
+
+### 1. Clone o Frontend
+
+```bash
+# Clone este repositório
+git clone https://github.com/fabioaloisio/casa-mais-react.git
+cd casa-mais-react
+```
+
+### 2. Instalação
 
 ```bash
 # Instalar dependências
@@ -25,6 +40,8 @@ echo "VITE_API_URL=http://localhost:3003/api" > .env
 # Iniciar servidor de desenvolvimento
 npm run dev
 ```
+
+**🌐 Aplicação rodando em**: `http://localhost:5173`
 
 ## 🎯 Scripts Disponíveis
 
@@ -80,8 +97,6 @@ O projeto utiliza um sistema padronizado de modais com componentes base reutiliz
 
 ## 🔄 Integração com Backend
 
-**✅ Integrado**: O frontend está totalmente integrado com a API do backend.
-
 ### Configuração da API
 
 ```bash
@@ -105,19 +120,66 @@ VITE_API_URL=http://localhost:3003/api
 - ✅ Validação de dados no cliente e servidor
 - ✅ Formatação automática de datas (DD/MM/YYYY)
 
-### Como Usar
+### Como Integrar com o Backend
+
+#### 1. Clone e configure o backend
 
 ```bash
-# 1. Iniciar o backend (com nodemon para hot reload)
-cd ../casa-mais-backend
-npm run dev
+# Clone o repositório do backend
+git clone https://github.com/fabioaloisio/casa-mais-backend.git
+cd casa-mais-backend
 
-# 2. Iniciar o frontend
+# Instale as dependências
+npm install
+
+# Configure o banco de dados MySQL
+# Edite o arquivo src/config/database.js com suas credenciais
+# Ou use as variáveis de ambiente:
+echo "DB_HOST=localhost" > .env
+echo "DB_USER=root" >> .env
+echo "DB_PASSWORD=sua_senha" >> .env
+echo "DB_NAME=casa_mais" >> .env
+
+# Execute o setup do banco (cria tabelas)
+npm run setup-db
+
+# Popule o banco de dados (opicional)
+npm run populate-db
+
+# Inicie o servidor
 npm run dev
 ```
 
-Backend estará em: `http://localhost:3003`  
-Frontend estará em: `http://localhost:5173`
+#### 2. Acesse a aplicação
+
+- **Backend API**: `http://localhost:3003`
+- **Frontend**: `http://localhost:5173`
+
+## 📱 Design Responsivo
+
+### Breakpoints
+
+- **Mobile**: < 768px
+- **Tablet**: 768px - 1024px
+- **Desktop**: > 1024px
+
+### Recursos Mobile
+
+- ✅ **Navegação móvel** com menu hambúrguer
+- ✅ **Tabelas responsivas** com scroll horizontal
+- ✅ **Touch-friendly** - alvos de toque ≥ 44px
+- ✅ **Formulários otimizados** para mobile
+- ✅ **Cards adaptáveis** em layouts de grid
+- ✅ **Overlay semitransparente** para navegação
+
+### Componentes Responsivos
+
+| Componente  | Mobile                    | Tablet            | Desktop           |
+| ----------- | ------------------------- | ----------------- | ----------------- |
+| Sidebar     | Menu hambúrguer + overlay | Sidebar menor     | Sidebar completa  |
+| Tabelas     | Scroll horizontal         | Scroll horizontal | Largura completa  |
+| Formulários | Layout vertical           | Layout misto      | Layout horizontal |
+| Cards       | Coluna única              | Grid 2 colunas    | Grid 3+ colunas   |
 
 ## 📱 Design Responsivo
 
@@ -176,15 +238,32 @@ Frontend estará em: `http://localhost:5173`
 
 ### Status de Integração
 
-| Módulo | Status | Banco de Dados |
-|--------|--------|----------------|
-| Dashboard | 🟡 Parcial | localStorage |
-| Usuários | 🔴 Local | localStorage |
-| Assistidas | 🔴 Local | localStorage |
-| Consultas | 🔴 Local | localStorage |
-| Medicamentos | 🟢 Integrado | MySQL API |
-| **Doações** | **🟢 Integrado** | **MySQL API** |
-| Despesas | 🔴 Local | localStorage |
+| Módulo           | Status           | Banco de Dados | Repositório Backend |
+| ---------------- | ---------------- | -------------- | ------------------- |
+| Dashboard        | 🟡 Parcial       | localStorage   | -                   |
+| Usuários         | 🔴 Local         | localStorage   | -                   |
+| Assistidas       | 🔴 Local         | localStorage   | -                   |
+| Consultas        | 🔴 Local         | localStorage   | -                   |
+| **Medicamentos** | **🟢 Integrado** | **MySQL API**  | **✅ Implementado** |
+| **Doações**      | **🟢 Integrado** | **MySQL API**  | **✅ Implementado** |
+| Despesas         | 🔴 Local         | localStorage   | -                   |
+
+### Pré-requisitos para Integração
+
+Para usar os módulos integrados (Medicamentos e Doações), você precisa:
+
+1. **MySQL** instalado e rodando
+2. **Backend Node.js** configurado e rodando
+3. **Variáveis de ambiente** configuradas no frontend
+
+### Estrutura da API
+
+```
+Backend: http://localhost:3003/api/
+├── /medicamentos    # CRUD completo de medicamentos
+├── /doacoes        # CRUD completo de doações
+└── /health         # Status da API
+```
 
 ## 🔒 Segurança
 
@@ -193,10 +272,41 @@ Frontend estará em: `http://localhost:5173`
 - Validar todos os inputs do usuário
 - Sanitizar dados antes de exibir
 
+## 🚨 Troubleshooting
+
+### Problemas Comuns
+
+#### Erro "process is not defined"
+
+```bash
+# Certifique-se que está usando VITE_ no prefixo das variáveis
+echo "VITE_API_URL=http://localhost:3003/api" > .env
+```
+
+#### Backend não conecta
+
+```bash
+# Verifique se o MySQL está rodando
+sudo service mysql start
+
+# Teste a conexão da API
+curl http://localhost:3003/api/health
+```
+
+#### Tabelas não existem
+
+```bash
+# Execute o setup do banco novamente
+cd casa-mais-backend
+npm run setup-db
+```
+
 ## 👥 Contribuindo
 
-1. Fork o projeto
+1. Fork os projetos:
+   - Frontend: https://github.com/fabioaloisio/casa-mais-react
+   - Backend: https://github.com/fabioaloisio/casa-mais-backend
 2. Crie sua feature branch (`git checkout -b feature/NovaFeature`)
 3. Commit suas mudanças (`git commit -m 'Add: nova feature'`)
 4. Push para a branch (`git push origin feature/NovaFeature`)
-5. Abra um Pull Request
+5. Abra um Pull Request no repositório correspondente
