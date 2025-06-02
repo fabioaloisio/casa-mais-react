@@ -355,3 +355,144 @@
     border-radius: 4px;
   }
 }
+
+/* Estilos para o formulário multi-etapas */
+.step-indicator {
+  margin-bottom: 2rem;
+}
+
+.step-indicator .step {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.step-indicator .circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+
+.step-indicator .step.active .circle {
+  background-color: #003366;
+  color: white;
+  border-color: #003366;
+  transform: scale(1.1);
+}
+
+.step-indicator .step.completed .circle {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.step-indicator .step-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  display: block;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.step-indicator .step.active .step-label {
+  color: #003366;
+  font-weight: 600;
+}
+
+.step-indicator .step.completed .step-label {
+  color: #28a745;
+}
+
+/* Campo de idade readonly */
+.form-control[readonly] {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+/* Fieldsets */
+fieldset.field {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fff;
+}
+
+fieldset.field legend {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #003366;
+  padding: 0 10px;
+  width: auto;
+  margin-bottom: 15px;
+}
+
+/* Tabela de substâncias */
+.table-light {
+  background-color: #f8f9fa;
+}
+
+.table-light th {
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Alert customizado */
+.alert-info {
+  background-color: #e7f3ff;
+  border-color: #b3d9ff;
+  color: #004085;
+}
+
+/* Responsividade do formulário */
+@media (max-width: 768px) {
+  .step-indicator .circle {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+  }
+  
+  .step-indicator .step-label {
+    font-size: 0.75rem;
+  }
+  
+  fieldset.field {
+    padding: 15px;
+  }
+  
+  fieldset.field legend {
+    font-size: 1rem;
+  }
+  
+  /* Campos de formulário ocupam linha inteira no mobile */
+  .col-md-2,
+  .col-md-3,
+  .col-md-4,
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  /* Modal footer responsivo */
+  .modal-footer {
+    flex-direction: column !important;
+    gap: 10px;
+  }
+  
+  .modal-footer > div {
+    width: 100%;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
