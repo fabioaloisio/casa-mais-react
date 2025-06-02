@@ -60,20 +60,45 @@ src/
 │   │   ├── ConfirmModal.jsx
 │   │   ├── FormModal.jsx
 │   │   └── Toast.jsx
+│   ├── assistidas/     # Componentes de assistidas
+│   │   ├── Assistidas.css
+│   │   ├── ConfirmDeleteModal.jsx
+│   │   └── Formulario.jsx
 │   ├── doacoes/        # Componentes de doações
+│   │   ├── ConfirmDeleteModal.jsx
+│   │   ├── DoacaoModal.css
+│   │   └── DoacaoModal.jsx
 │   ├── medicamentos/   # Componentes de medicamentos
+│   │   ├── ConfirmDeleteModal.jsx
+│   │   └── MedicamentoModal.jsx
 │   └── usuarios/       # Componentes de usuários
+│       ├── ConfirmDeleteModal.jsx
+│       └── UsuarioModal.jsx
 ├── pages/              # Páginas da aplicação
+│   ├── Dashboard.jsx
+│   ├── Dashboard.css
+│   ├── Usuarios.jsx
+│   ├── Usuarios.css
+│   ├── Assistidas.jsx
+│   ├── DetalhesAssistida.jsx
+│   ├── Consultas.jsx
+│   ├── Medicamentos.jsx
+│   ├── Doacoes.jsx
+│   ├── Doacoes.css
+│   └── Despesas.jsx
 ├── services/           # Camada de serviços (API)
 │   ├── api.js         # Cliente HTTP genérico
+│   ├── assistidasService.js # Serviço de assistidas com API ready
 │   ├── doacoesService.js # Serviço de doações integrado com API
 │   └── MedicamentoService.js # Serviço de medicamentos integrado com API
 ├── config/             # Configurações da aplicação
 │   └── api.js         # Configuração da API (URL, timeout, headers)
 ├── utils/              # Funções utilitárias
 │   ├── masks.js       # Máscaras de formatação
+│   ├── sampleData.js  # Dados de exemplo para desenvolvimento
 │   └── validations.js # Validações de formulário
 └── styles/             # Estilos globais
+    └── theme.css      # Variáveis CSS e tema global
 ```
 
 ## 🎨 Sistema de Modais
@@ -181,32 +206,6 @@ npm run dev
 | Formulários | Layout vertical           | Layout misto      | Layout horizontal |
 | Cards       | Coluna única              | Grid 2 colunas    | Grid 3+ colunas   |
 
-## 📱 Design Responsivo
-
-### Breakpoints
-
-- **Mobile**: < 768px
-- **Tablet**: 768px - 1024px  
-- **Desktop**: > 1024px
-
-### Recursos Mobile
-
-- ✅ **Navegação móvel** com menu hambúrguer
-- ✅ **Tabelas responsivas** com scroll horizontal
-- ✅ **Touch-friendly** - alvos de toque ≥ 44px
-- ✅ **Formulários otimizados** para mobile
-- ✅ **Cards adaptáveis** em layouts de grid
-- ✅ **Overlay semitransparente** para navegação
-
-### Componentes Responsivos
-
-| Componente | Mobile | Tablet | Desktop |
-|-----------|--------|--------|---------|
-| Sidebar | Menu hambúrguer + overlay | Sidebar menor | Sidebar completa |
-| Tabelas | Scroll horizontal | Scroll horizontal | Largura completa |
-| Formulários | Layout vertical | Layout misto | Layout horizontal |
-| Cards | Coluna única | Grid 2 colunas | Grid 3+ colunas |
-
 ## 🛠️ Desenvolvimento
 
 ### Padrões de Código
@@ -230,7 +229,7 @@ npm run dev
 
 - **Dashboard** - Visão geral com estatísticas
 - **Usuários** - Gestão de usuários do sistema
-- **Assistidas** - Cadastro de beneficiárias
+- **🆕 Assistidas** - **Gestão completa de beneficiárias** com formulário multi-etapas
 - **Consultas** - Agendamento médico
 - **Medicamentos** - Controle de estoque (integrado com API)
 - **Doações** - Registro de contribuições (integrado com API MySQL)
@@ -238,19 +237,31 @@ npm run dev
 
 ### Status de Integração
 
-| Módulo           | Status           | Banco de Dados | Repositório Backend |
-| ---------------- | ---------------- | -------------- | ------------------- |
-| Dashboard        | 🟡 Parcial       | localStorage   | -                   |
-| Usuários         | 🔴 Local         | localStorage   | -                   |
-| Assistidas       | 🔴 Local         | localStorage   | -                   |
-| Consultas        | 🔴 Local         | localStorage   | -                   |
-| **Medicamentos** | **🟢 Integrado** | **MySQL API**  | **✅ Implementado** |
-| **Doações**      | **🟢 Integrado** | **MySQL API**  | **✅ Implementado** |
-| Despesas         | 🔴 Local         | localStorage   | -                   |
+| Módulo           | Status                    | Funcionalidades              | Banco de Dados |
+| ---------------- | ------------------------- | ---------------------------- | -------------- |
+| Dashboard        | 🟡 Parcial                | Estatísticas básicas         | localStorage   |
+| Usuários         | 🔴 Local                  | CRUD básico                  | localStorage   |
+| **🆕 Assistidas** | **🟢 Completo**           | **CRUD + Filtros + Perfil**  | **localStorage + API Ready** |
+| Consultas        | 🔴 Local                  | CRUD básico                  | localStorage   |
+| **Medicamentos** | **🟢 Integrado**          | **CRUD completo**            | **MySQL API**  |
+| **Doações**      | **🟢 Integrado**          | **CRUD completo**            | **MySQL API**  |
+| Despesas         | 🔴 Local                  | CRUD básico                  | localStorage   |
+
+### 🆕 Módulo Assistidas - Funcionalidades
+
+O módulo de Gestão de Assistidas agora está **completamente implementado** com:
+
+- ✅ **CRUD Completo**: Criar, visualizar, editar e excluir assistidas
+- ✅ **Formulário Multi-etapas**: 4 etapas de cadastro com validação
+- ✅ **Sistema de Filtros**: Por nome, CPF, idade e status
+- ✅ **Página de Perfil**: Visualização completa dos dados da assistida
+- ✅ **Cards de Estatísticas**: Total, ativas, em tratamento e inativas
+- ✅ **Design Responsivo**: Otimizado para mobile, tablet e desktop
+- ✅ **Pronto para API**: Service preparado para integração com backend
 
 ### Pré-requisitos para Integração
 
-Para usar os módulos integrados (Medicamentos e Doações), você precisa:
+Para usar os módulos integrados (Medicamentos, Doações e Assistidas), você precisa:
 
 1. **MySQL** instalado e rodando
 2. **Backend Node.js** configurado e rodando
@@ -260,10 +271,23 @@ Para usar os módulos integrados (Medicamentos e Doações), você precisa:
 
 ```
 Backend: http://localhost:3003/api/
-├── /medicamentos    # CRUD completo de medicamentos
-├── /doacoes        # CRUD completo de doações
+├── /medicamentos    # CRUD completo de medicamentos ✅
+├── /doacoes        # CRUD completo de doações ✅
+├── /assistidas     # CRUD completo de assistidas 🚀 (pronto p/ implementação)
 └── /health         # Status da API
 ```
+
+## 🧹 Limpeza de Código
+
+O projeto foi **otimizado e limpo** removendo:
+
+- ✅ **Arquivos duplicados**: `DetalheAssistida.jsx` (vazio)
+- ✅ **Componentes não utilizados**: CSS vazios, modais antigos
+- ✅ **Páginas obsoletas**: Cadastros substituídos por modais
+- ✅ **Assets desnecessários**: React SVG, CSS não utilizados
+- ✅ **Imports quebrados**: Componentes removidos das importações
+
+**Resultado**: Redução de 453 → 449 módulos no build e código mais limpo.
 
 ## 🔒 Segurança
 
