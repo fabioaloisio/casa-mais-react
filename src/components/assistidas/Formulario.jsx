@@ -22,14 +22,18 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
             'logradouro', 'bairro', 'numero', 'cep', 'estado', 'cidade', 
             'telefone', 'telefone_contato',
             'data_atendimento', 'hora', 'historia_patologica', 'usuaria_drogas',
-            'quantidade_drogas', 'tempo_sem_uso', 'uso_medicamentos', 'quais_medicamentos',
-            'internado', 'quantidade_internacoes', 'motivacao_internacoes',
+            'quantidade_drogas', 'tempo_sem_uso', 'uso_medicamentos', 'quantidade_medicamentos',
+            'internada', 'quantidade_internacoes', 'motivacao_internacoes',
             'fatos_marcantes', 'infancia', 'adolescencia'
         ];
         
         const normalized = {};
         formFields.forEach(field => {
-            normalized[field] = data[field] || '';
+            if (field === 'nacionalidade' && !data[field]) {
+                normalized[field] = 'Brasileira';
+            } else {
+                normalized[field] = data[field] || '';
+            }
         });
         
         // Adicionar campos dinâmicos de drogas
@@ -49,6 +53,17 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
             for (let i = 1; i <= qtd; i++) {
                 ['local', 'duracao', 'data'].forEach(campo => {
                     const fieldName = `${campo}${i}`;
+                    normalized[fieldName] = data[fieldName] || '';
+                });
+            }
+        }
+        
+        // Adicionar campos dinâmicos de medicamentos
+        if (data.quantidade_medicamentos) {
+            const qtd = parseInt(data.quantidade_medicamentos) || 0;
+            for (let i = 1; i <= qtd; i++) {
+                ['nome', 'dosagem', 'frequencia'].forEach(campo => {
+                    const fieldName = `medicamento${i}_${campo}`;
                     normalized[fieldName] = data[fieldName] || '';
                 });
             }
@@ -75,11 +90,13 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                 const dadosNormalizados = normalizeFormData(dadosFormatados);
                 setFormData(dadosNormalizados);
                 setInitialData(dadosNormalizados);
+                setCompletedSteps([]);
             } else {
                 // Limpar formulário para novo cadastro
                 const dadosIniciais = normalizeFormData({ status: 'Ativa' });
                 setFormData(dadosIniciais);
                 setInitialData(dadosIniciais);
+                setCompletedSteps([]);
             }
         }
     }, [modoEdicao, assistidaParaEditar, showModal]);
@@ -89,6 +106,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         if (!showModal) {
             setStep(1);
             setFormErrors({});
+            setCompletedSteps([]);
             if (!modoEdicao) {
                 setFormData({ status: 'Ativa' });
             }
@@ -148,6 +166,16 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
             camposObrigatorios.forEach((field) => {
                 if (!formData[field]) errors[field] = "Campo obrigatório";
             });
+            
+            // Validar se os campos de sim/não foram preenchidos
+            if (!formData.usuaria_drogas) {
+                errors["usuaria_drogas"] = "Campo obrigatório";
+            }
+            
+            if (!formData.uso_medicamentos) {
+                errors["uso_medicamentos"] = "Campo obrigatório";
+            }
+            
             // Se usuária de drogas, validar campos relacionados
             if (formData.usuaria_drogas === "sim") {
                 if (!formData.quantidade_drogas || parseInt(formData.quantidade_drogas) < 1) {
@@ -169,14 +197,24 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                 }
             }
 
-            // Se usa medicamentos, validar campo 'quais_medicamentos'
-            if (formData.uso_medicamentos === "sim" && !formData.quais_medicamentos) {
-                errors["quais_medicamentos"] = "Campo obrigatório";
+            // Se usa medicamentos, validar campos relacionados
+            if (formData.uso_medicamentos === "sim") {
+                if (!formData.quantidade_medicamentos || parseInt(formData.quantidade_medicamentos) < 1) {
+                    errors["quantidade_medicamentos"] = "Informe a quantidade de medicamentos";
+                } else {
+                    const quantidade = parseInt(formData.quantidade_medicamentos);
+                    for (let i = 1; i <= quantidade; i++) {
+                        const nomeField = `medicamento${i}_nome`;
+                        if (!formData[nomeField]) {
+                            errors[nomeField] = "Nome do medicamento é obrigatório";
+                        }
+                    }
+                }
             }
         }
 
         // if (step === 4) {
-        //     if (formData.internado === "sim") {
+        //     if (formData.internada === "sim") {
         //         if (!formData.quantidade_internacoes || parseInt(formData.quantidade_internacoes) < 1) {
         //             errors["quantidade_internacoes"] = "Campo obrigatório";
         //         } else {
@@ -243,7 +281,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         }
 
         // Validação específica do passo 4
-        if (formData.internado === "sim") {
+        if (formData.internada === "sim") {
             if (!formData.quantidade_internacoes || formData.quantidade_internacoes.trim() === "") {
                 errors["quantidade_internacoes"] = "Campo obrigatório";
                 if (!firstErrorStep) firstErrorStep = 4;
@@ -274,7 +312,6 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
 
 
     const campos = [
-        ...(formData.internado === "sim" ? ["motivacao_internacoes"] : []),
         "fatos_marcantes",
         "infancia",
         "adolescencia"
@@ -331,9 +368,14 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
 
                 <Form noValidate>
                     {step === 1 && (
-                        <fieldset className='d-flex justify-content-center field'>
-                            <legend>Dados Pessoais</legend>
-                            <Row className="d-flex flex-wrap justify-content-center">
+                        <div className="w-100">
+                            {/* Header do Step 1 */}
+                            <div className="bg-primary p-3 rounded-top">
+                                <h4 className="mb-0 text-center" style={{color: 'white'}}>Dados Pessoais</h4>
+                            </div>
+                            
+                            <fieldset className='d-flex justify-content-center field rounded-bottom border-top-0'>
+                                <Row className="d-flex flex-wrap justify-content-center">
                                 {[
                                     { name: "nome", label: "Nome Completo", col: 6 },
                                     { name: "cpf", label: "CPF", mask: "000.000.000-00" },
@@ -381,7 +423,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                                 <Form.Control
                                                     name={name}
                                                     type={type}
-                                                    value={formData[name] || defaultValue || ''}
+                                                    value={name === 'nacionalidade' && !formData[name] ? 'Brasileira' : (formData[name] || defaultValue || '')}
                                                     onChange={handleChange}
                                                     isInvalid={!!formErrors[name]}
                                                     readOnly={readonly}
@@ -395,26 +437,34 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                 ))}
                             </Row>
                         </fieldset>
+                        </div>
                     )}
 
                     {step === 2 && (
-                        <fieldset className="w-100 field d-flex justify-content-center">
-                            <legend>Informações de Contato e Endereço</legend>
-                            <Row className="w-100 d-flex flex-wrap justify-content-center">
-                                {[
-                                    { field: "logradouro", label: "Logradouro", col: 6 },
-                                    { field: "numero", label: "Número", type: "text", col: 2 },
-                                    { field: "bairro", label: "Bairro" },
-                                    { field: "cep", label: "CEP", mask: "00000-000" },
-                                    { field: "cidade", label: "Cidade" },
-                                    { field: "estado", label: "Estado", type: "select", options: [
-                                        "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
-                                        "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", 
-                                        "RS", "RO", "RR", "SC", "SP", "SE", "TO"
-                                    ] },
-                                    { field: "telefone", label: "Telefone", mask: "(00) 00000-0000" },
-                                    { field: "telefone_contato", label: "Telefone de Contato", mask: "(00) 00000-0000" }
-                                ].map(({ field, label, type = "text", mask, col = 3, options }, idx) => (
+                        <div className="w-100">
+                            {/* Header do Step 2 */}
+                            <div className="bg-primary p-3 rounded-top">
+                                <h4 className="mb-0 text-center" style={{color: 'white'}}>Contato e Endereço</h4>
+                            </div>
+                            
+                            <fieldset className="field rounded-bottom border-top-0 p-4">
+                                <Row className="w-100">
+                                    <Col md={12}>
+                                        {/* Seção de Endereço */}
+                                        <h5 className="mb-3">Endereço</h5>
+                                        <Row className="mb-4">
+                                            {[
+                                                { field: "logradouro", label: "Logradouro", col: 7 },
+                                                { field: "numero", label: "Número", type: "text", col: 2 },
+                                                { field: "cep", label: "CEP", mask: "00000-000", col: 3 },
+                                                { field: "bairro", label: "Bairro", col: 4 },
+                                                { field: "cidade", label: "Cidade", col: 6 },
+                                                { field: "estado", label: "Estado", type: "select", col: 2, options: [
+                                                    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
+                                                    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", 
+                                                    "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+                                                ] }
+                                            ].map(({ field, label, type = "text", mask, col, options }, idx) => (
                                     <Col md={col} key={idx} className="mb-3">
                                         <Form.Group>
                                             <Form.Label>
@@ -459,15 +509,55 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
-                                ))}
-                            </Row>
-                        </fieldset>
+                                            ))}
+                                        </Row>
+                                        
+                                        {/* Seção de Contato */}
+                                        <h5 className="mb-3">Contato</h5>
+                                        <Row>
+                                            {[
+                                                { field: "telefone", label: "Telefone", mask: "(00) 00000-0000", col: 4 },
+                                                { field: "telefone_contato", label: "Telefone de Contato", mask: "(00) 00000-0000", col: 4 }
+                                            ].map(({ field, label, mask, col }, idx) => (
+                                                <Col md={col} key={`contact-${idx}`} className="mb-3">
+                                                    <Form.Group>
+                                                        <Form.Label>
+                                                            {label}
+                                                            {field === "telefone" && (
+                                                                <span className="text-danger ms-1">*</span>
+                                                            )}
+                                                        </Form.Label>
+                                                        <IMaskInput
+                                                            mask={mask}
+                                                            name={field}
+                                                            value={formData[field] || ''}
+                                                            unmask={true}
+                                                            onAccept={(value) => handleMaskChange(field, value)}
+                                                            className={`form-control ${formErrors[field] ? 'is-invalid' : ''}`}
+                                                            placeholder={mask.replace(/0/g, "_")}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {formErrors[field]}
+                                                        </Form.Control.Feedback>
+                                                    </Form.Group>
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </fieldset>
+                        </div>
                     )}
 
                     {step === 3 && (
-                        <fieldset className="field d-flex justify-content-center">
-                            <legend>Condição Atual e Uso de Substâncias</legend>
-                            <Row className="w-100">
+                        <div className="w-100">
+                            {/* Header do Step 3 */}
+                            <div className="bg-primary p-3 rounded-top">
+                                <h4 className="mb-0 text-center" style={{color: 'white'}}>Histórico Médico I</h4>
+                            </div>
+                            
+                            <fieldset className="field d-flex justify-content-center rounded-bottom border-top-0">
+                                <Row className="w-100">
                                 <Col md={12} className="mb-3">
                                     <Alert variant="info" className="d-flex align-items-center">
                                         <FaExclamationTriangle className="me-2" />
@@ -480,7 +570,10 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                 ].map(({ name, label, type = "text", as, placeholder }, idx) => (
                                     <Col md={name === "historia_patologica" ? 6 : 3} key={idx} className="mb-3">
                                         <Form.Group>
-                                            <Form.Label>{label}</Form.Label>
+                                            <Form.Label>
+                                                {label}
+                                                <span className="text-danger ms-1">*</span>
+                                            </Form.Label>
                                             <Form.Control
                                                 name={name}
                                                 type={type}
@@ -501,7 +594,10 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                 {/* Usuária de drogas */}
                                 <Col md={3}>
                                     <Form.Group>
-                                        <Form.Label>Usuária de drogas?</Form.Label>
+                                        <Form.Label>
+                                            Usuária de drogas?
+                                            <span className="text-danger ms-1">*</span>
+                                        </Form.Label>
                                         <Form.Select
                                             name="usuaria_drogas"
                                             value={formData.usuaria_drogas || ''}
@@ -512,9 +608,9 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                             <option value="nao">Não</option>
                                             <option value="sim">Sim</option>
                                         </Form.Select>
-                                        {/* <Form.Control.Feedback type="invalid">
+                                        <Form.Control.Feedback type="invalid">
                                             {formErrors["usuaria_drogas"]}
-                                        </Form.Control.Feedback> */}
+                                        </Form.Control.Feedback>
                                     </Form.Group>
 
                                 </Col>
@@ -599,7 +695,10 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                 {/* Usa medicamentos */}
                                 <Col md={3}>
                                     <Form.Group>
-                                        <Form.Label>Usa medicamentos?</Form.Label>
+                                        <Form.Label>
+                                            Usa medicamentos?
+                                            <span className="text-danger ms-1">*</span>
+                                        </Form.Label>
                                         <Form.Select
                                             name="uso_medicamentos"
                                             value={formData.uso_medicamentos || ''}
@@ -617,108 +716,216 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                 </Col>
 
                                 {formData.uso_medicamentos === "sim" && (
-                                    <Col md={4}>
-                                        <Form.Group>
-                                            <Form.Label>Quais?</Form.Label>
-                                            <Form.Control
-                                                name="quais_medicamentos"
-                                                value={formData.quais_medicamentos || ''}
-                                                onChange={handleChange}
-                                                isInvalid={!!formErrors["quais_medicamentos"]}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {formErrors["quais_medicamentos"]}
-                                            </Form.Control.Feedback>
-                                        </Form.Group>
-                                    </Col>
+                                    <>
+                                        <Col md={3}>
+                                            <Form.Group>
+                                                <Form.Label>Quantos medicamentos?</Form.Label>
+                                                <Form.Control
+                                                    type="number"
+                                                    min="1"
+                                                    max="10"
+                                                    name="quantidade_medicamentos"
+                                                    value={formData.quantidade_medicamentos || ''}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!formErrors["quantidade_medicamentos"]}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {formErrors["quantidade_medicamentos"]}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col md={12}>
+                                            {formData.quantidade_medicamentos > 0 && (
+                                                <div className="mt-4">
+                                                    <h5 className="mb-3">Lista de Medicamentos em Uso</h5>
+                                                    <Table bordered hover responsive>
+                                                        <thead className="table-light">
+                                                            <tr>
+                                                                <th style={{width: '50%'}}>Nome do Medicamento</th>
+                                                                <th style={{width: '25%'}}>Dosagem</th>
+                                                                <th style={{width: '25%'}}>Frequência</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {Array.from({ length: parseInt(formData.quantidade_medicamentos) || 0 }, (_, i) => i + 1).map((i) => (
+                                                                <tr key={i}>
+                                                                    <td>
+                                                                        <Form.Control
+                                                                            name={`medicamento${i}_nome`}
+                                                                            value={formData[`medicamento${i}_nome`] || ''}
+                                                                            onChange={handleChange}
+                                                                            placeholder="Ex: Paracetamol"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <Form.Control
+                                                                            name={`medicamento${i}_dosagem`}
+                                                                            value={formData[`medicamento${i}_dosagem`] || ''}
+                                                                            onChange={handleChange}
+                                                                            placeholder="Ex: 500mg"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <Form.Control
+                                                                            name={`medicamento${i}_frequencia`}
+                                                                            value={formData[`medicamento${i}_frequencia`] || ''}
+                                                                            onChange={handleChange}
+                                                                            placeholder="Ex: 2x ao dia"
+                                                                        />
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </Table>
+                                                </div>
+                                            )}
+                                        </Col>
+                                    </>
                                 )}
                             </Row>
                         </fieldset>
+                        </div>
                     )}
 
                     {step === 4 && (
-                        <fieldset className="d-flex justify-content-center field">
-                            <legend>Internações Anteriores e Vida Pessoal</legend>
+                        <div className="w-100">
+                            {/* Header do Step 4 */}
+                            <div className="bg-primary p-3 rounded-top">
+                                <h4 className="mb-0 text-center" style={{color: 'white'}}>Internações Anteriores e Vida Pessoal</h4>
+                            </div>
                             
-                            {/* Seção de Internações */}
-                            <Row className="w-100 mb-4">
-                                <Col md={12}>
-                                    <h5 className="mb-3">Internações Anteriores</h5>
-                                </Col>
-                                <Col md={3}>
-                                    <Form.Group>
-                                        <Form.Label>Já esteve internado?</Form.Label>
-                                        <Form.Select
-                                            name="internado"
-                                            value={formData.internado || ''}
-                                            onChange={handleChange}
-                                            isInvalid={!!formErrors['internado']}
-                                        >
-                                            <option value="">Selecione...</option>
-                                            <option value="nao">Não</option>
-                                            <option value="sim">Sim</option>
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-                                {formData.internado === "sim" && (
-                                    <Col md={3}>
-                                        <Form.Group>
-                                            <Form.Label>Quantas vezes?</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                name="quantidade_internacoes"
-                                                value={formData.quantidade_internacoes || ''}
-                                                onChange={handleChange}
-                                                isInvalid={!!formErrors['quantidade_internacoes']}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {formErrors['quantidade_internacoes']}
-                                            </Form.Control.Feedback>
-                                        </Form.Group>
-                                    </Col>
-                                )}
-                            </Row>
-
-                            {/* Detalhes das Internações */}
-                            {formData.internado === "sim" && (
-                                <Row className="w-100 mb-4">
+                            <fieldset className="field rounded-bottom border-top-0 p-4">
+                                <Row className="w-100">
                                     <Col md={12}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label>Motivação das Internações</Form.Label>
-                                            <Form.Control
-                                                as="textarea"
-                                                rows={3}
-                                                name="motivacao_internacoes"
-                                                value={formData.motivacao_internacoes || ''}
-                                                onChange={handleChange}
-                                                placeholder="Descreva os motivos das internações..."
-                                            />
-                                        </Form.Group>
+                                        {/* Seção de Internações - Perguntas iniciais */}
+                                        <Row className="mb-3">
+                                            <Col md={3}>
+                                                <Form.Group>
+                                                    <Form.Label>Já esteve internada?</Form.Label>
+                                                    <Form.Select
+                                                        name="internada"
+                                                        value={formData.internada || ''}
+                                                        onChange={handleChange}
+                                                        isInvalid={!!formErrors['internada']}
+                                                    >
+                                                        <option value="">Selecione...</option>
+                                                        <option value="nao">Não</option>
+                                                        <option value="sim">Sim</option>
+                                                    </Form.Select>
+                                                </Form.Group>
+                                            </Col>
+                                            {formData.internada === "sim" && (
+                                                <Col md={3}>
+                                                    <Form.Group>
+                                                        <Form.Label>Quantas vezes?</Form.Label>
+                                                        <Form.Control
+                                                            type="number"
+                                                            name="quantidade_internacoes"
+                                                            value={formData.quantidade_internacoes || ''}
+                                                            onChange={handleChange}
+                                                            isInvalid={!!formErrors['quantidade_internacoes']}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {formErrors['quantidade_internacoes']}
+                                                        </Form.Control.Feedback>
+                                                    </Form.Group>
+                                                </Col>
+                                            )}
+                                        </Row>
+
+                                        {/* Detalhes das Internações */}
+                                        {formData.internada === "sim" && formData.quantidade_internacoes > 0 && (
+                                            <div className="border rounded p-4 bg-light">
+                                                <h5 className="mb-3">Detalhes das Internações</h5>
+                                                <Table bordered hover responsive className="mb-4">
+                                                    <thead className="table-light">
+                                                        <tr>
+                                                            <th style={{width: '50%'}}>Local</th>
+                                                            <th style={{width: '25%'}}>Duração</th>
+                                                            <th style={{width: '25%'}}>Data</th>
+                                                        </tr>
+                                                    </thead>
+                                                <tbody>
+                                                    {Array.from({ length: parseInt(formData.quantidade_internacoes) || 0 }, (_, i) => i + 1).map((i) => (
+                                                        <tr key={i}>
+                                                            <td>
+                                                                <Form.Control
+                                                                    name={`local${i}`}
+                                                                    value={formData[`local${i}`] || ''}
+                                                                    onChange={handleChange}
+                                                                    placeholder="Nome do hospital/clínica"
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Form.Control
+                                                                    name={`duracao${i}`}
+                                                                    value={formData[`duracao${i}`] || ''}
+                                                                    onChange={handleChange}
+                                                                    placeholder="Ex: 3 meses"
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Form.Control
+                                                                    type="date"
+                                                                    name={`data${i}`}
+                                                                    value={formData[`data${i}`] || ''}
+                                                                    onChange={handleChange}
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                            
+                                            <Form.Group>
+                                                <Form.Label className="fw-bold">Motivação das Internações</Form.Label>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    rows={5}
+                                                    name="motivacao_internacoes"
+                                                    value={formData.motivacao_internacoes || ''}
+                                                    onChange={handleChange}
+                                                    placeholder="Descreva detalhadamente os motivos que levaram às internações..."
+                                                    style={{resize: 'vertical'}}
+                                                />
+                                            </Form.Group>
+                                        </div>
+                                        )}
                                     </Col>
                                 </Row>
-                            )}
 
-                            {/* Seção de Vida Pessoal */}
-                            <Row className="w-100">
-                                <Col md={12}>
-                                    <h5 className="mb-3">História de Vida</h5>
-                                </Col>
-                                {campos.map((campo, idx) => (
-                                    <Col md={3} key={idx}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label>{campo.replace(/_/g, " ").toUpperCase()}</Form.Label>
-                                            <Form.Control
-                                                as="textarea"
-                                                rows={4}
-                                                name={campo}
-                                                value={formData[campo] || ''}
-                                                onChange={handleChange}
-                                            />
-                                        </Form.Group>
+                                {/* Seção de Vida Pessoal */}
+                                <Row className="w-100">
+                                    <Col md={12}>
+                                        <h5 className="mb-3">História de Vida</h5>
                                     </Col>
-                                ))}
-                            </Row>
-                        </fieldset>
+                                    {campos.map((campo, idx) => (
+                                        <Col md={6} key={idx}>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label className="fw-bold">
+                                                    {campo === 'fatos_marcantes' ? 'Fatos Marcantes' :
+                                                     campo === 'infancia' ? 'Infância' :
+                                                     campo === 'adolescencia' ? 'Adolescência' : 
+                                                     campo.replace(/_/g, " ").toUpperCase()}
+                                                </Form.Label>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    rows={6}
+                                                    name={campo}
+                                                    value={formData[campo] || ''}
+                                                    onChange={handleChange}
+                                                    placeholder={campo === 'fatos_marcantes' ? 'Descreva eventos importantes e marcantes na vida da assistida...' :
+                                                                campo === 'infancia' ? 'Relate informações sobre a infância...' :
+                                                                campo === 'adolescencia' ? 'Descreva o período da adolescência...' : ''}
+                                                    style={{minHeight: '120px', resize: 'vertical'}}
+                                                />
+                                            </Form.Group>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </fieldset>
+                        </div>
                     )}
 
                 </Form>

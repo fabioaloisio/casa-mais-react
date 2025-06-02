@@ -45,6 +45,14 @@
   color: #0d4c8b;
 }
 
+.step.completed .circle {
+  background-color: #28a745;
+}
+
+.step.completed span {
+  color: #28a745;
+}
+
 .step::before,
 .step::after,
 .circle::before,
