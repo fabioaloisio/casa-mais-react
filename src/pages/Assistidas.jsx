@@ -276,7 +276,7 @@ const Assistidas = () => {
                   value={filtroIdade}
                   onChange={(e) => setFiltroIdade(e.target.value)}
                   style={{ minWidth: '100px' }}
-                  
+
                 />
               </Form.Group>
 

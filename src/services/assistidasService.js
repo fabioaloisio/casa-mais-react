@@ -50,6 +50,18 @@ export const assistidasService = {
       throw new Error('Erro ao excluir assistida. Tente novamente.');
     }
   },
+  
+  obterEstatisticas: async (filtros = {}) => {
+    try {
+      const params = new URLSearchParams(filtros).toString();
+      const response = await apiService.get(`/assistidas/estatisticas?${params}`);
+      return response.success ? response.data : null;
+    } catch (error) {
+      console.error('Erro ao obter estatísticas de assistidas:', error.message);
+      throw new Error('Erro ao carregar estatísticas. Tente novamente.');
+    }
+  },
+
 
   // Métodos legados (mantidos para compatibilidade)
   getAll: async () => {

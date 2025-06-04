@@ -4,8 +4,8 @@ Interface web do sistema de gestão para a organização social Casa de Lázaro 
 
 ## 📚 Repositórios
 
-- **Frontend React**: https://github.com/fabioaloisio/casa-mais-react
-- **Backend Node.js**: https://github.com/fabioaloisio/casa-mais-backend
+- **Frontend React**: https://github.com/julianocamposcode/casa_mais/casa-mais-react
+- **Backend Node.js**: https://github.com/julianocamposcode/casa_mais/casa-mais-backend
 
 ## 🚀 Tecnologias
 
@@ -54,51 +54,72 @@ npm run dev
 
 ```
 src/
-├── components/          # Componentes reutilizáveis
-│   ├── common/         # Componentes genéricos
-│   │   ├── BaseModal.jsx
-│   │   ├── ConfirmModal.jsx
-│   │   ├── FormModal.jsx
-│   │   └── Toast.jsx
-│   ├── assistidas/     # Componentes de assistidas
-│   │   ├── Assistidas.css
-│   │   ├── ConfirmDeleteModal.jsx
-│   │   └── Formulario.jsx
-│   ├── doacoes/        # Componentes de doações
-│   │   ├── ConfirmDeleteModal.jsx
-│   │   ├── DoacaoModal.css
-│   │   └── DoacaoModal.jsx
-│   ├── medicamentos/   # Componentes de medicamentos
-│   │   ├── ConfirmDeleteModal.jsx
-│   │   └── MedicamentoModal.jsx
-│   └── usuarios/       # Componentes de usuários
-│       ├── ConfirmDeleteModal.jsx
-│       └── UsuarioModal.jsx
-├── pages/              # Páginas da aplicação
-│   ├── Dashboard.jsx
-│   ├── Dashboard.css
-│   ├── Usuarios.jsx
-│   ├── Usuarios.css
-│   ├── Assistidas.jsx
-│   ├── DetalhesAssistida.jsx
-│   ├── Consultas.jsx
-│   ├── Medicamentos.jsx
-│   ├── Doacoes.jsx
-│   ├── Doacoes.css
-│   └── Despesas.jsx
-├── services/           # Camada de serviços (API)
-│   ├── api.js         # Cliente HTTP genérico
-│   ├── assistidasService.js # Serviço de assistidas com API ready
-│   ├── doacoesService.js # Serviço de doações integrado com API
-│   └── MedicamentoService.js # Serviço de medicamentos integrado com API
-├── config/             # Configurações da aplicação
-│   └── api.js         # Configuração da API (URL, timeout, headers)
-├── utils/              # Funções utilitárias
-│   ├── masks.js       # Máscaras de formatação
-│   ├── sampleData.js  # Dados de exemplo para desenvolvimento
-│   └── validations.js # Validações de formulário
-└── styles/             # Estilos globais
-    └── theme.css      # Variáveis CSS e tema global
+├── components/                         # Componentes reutilizáveis da interface
+│   ├── assistidas/                    # Componentes específicos para gestão de assistidas
+│   │   ├── Assistidas.css             # Estilização da página de assistidas
+│   │   ├── ConfirmDeleteModal.jsx     # Modal de confirmação para exclusão
+│   │   ├── form.css                   # Estilo dos formulários de assistidas
+│   │   ├── Formulario.jsx             # Formulário completo de assistidas
+│   │   ├── FormularioSimples.jsx      # Versão simplificada do formulário
+│   │   ├── internacoes.jsx            # Listagem de internações vinculadas
+│   │   └── ListaAssistidas.jsx        # Tabela com filtro e ações
+│
+│   ├── common/                        # Componentes genéricos reutilizáveis
+│   │   ├── BaseModal.jsx              # Modal base padrão
+│   │   ├── ConfirmModal.jsx           # Modal de confirmação
+│   │   ├── FormModal.jsx              # Modal com formulário interno
+│   │   ├── Toast.jsx                  # Notificações do tipo toast
+│   │   └── useUnsavedChanges.js       # Hook para detectar mudanças não salvas
+│
+│   ├── doacoes/                       # Componentes relacionados a doações
+│   │   ├── ConfirmDeleteModal.jsx     # Modal de confirmação de exclusão
+│   │   ├── DoacaoModal.css            # Estilo do modal de doações
+│   │   └── DoacaoModal.jsx            # Modal para cadastrar/editar doações
+│
+│   ├── medicamentos/                  # Componentes para medicamentos
+│   │   ├── ModalCadastroMedicamento.jsx # Modal de criação
+│   │   ├── ModalEditarMedicamento.jsx  # Modal de edição
+│   │   ├── ModalExclusaoMedicamento.jsx # Modal de exclusão
+│   │   └── TabelaMedicamentos.jsx      # Tabela geral de medicamentos
+│
+│   └── usuarios/                      # Componentes para usuários do sistema
+│       └── UsuarioModal.jsx           # Modal de cadastro/edição de usuário
+
+├── config/                             # Configurações globais da aplicação
+│   └── api.js                         # URL base e setup do axios
+
+├── pages/                              # Páginas principais do sistema
+│   ├── AgendarConsulta.jsx            # Página para agendar consultas
+│   ├── Assistidas.jsx                 # Página de gestão de assistidas
+│   ├── CadastroUsuario.jsx            # Cadastro de novo usuário
+│   ├── Consultas.jsx                  # Histórico de consultas
+│   ├── Dashboard.jsx / .css           # Painel com indicadores
+│   ├── Despesas.jsx                   # Controle de despesas
+│   ├── DetalhesAssistida.jsx          # Perfil completo da assistida
+│   ├── Doacoes.jsx / .css             # Página de doações
+│   ├── EstoqueEntradas.jsx           # Entradas no estoque
+│   ├── EstoqueSaidas.jsx             # Saídas do estoque
+│   ├── GerenciarMedicamentos.jsx     # Tela de controle de medicamentos
+│   ├── GerenciarMedicamentos.css     # Estilo da tela de medicamentos
+│   ├── LancarDespesas.jsx            # Lançamento de despesas
+│   └── Usuarios.jsx / .css            # Tela de administração de usuários
+
+├── services/                           # 🟡 Camada de serviços (API)
+│   ├── api.js                         # ✅ Cliente HTTP genérico (Axios)
+│   ├── assistidasService.js          # ✅ Serviço de assistidas com API ready
+│   ├── doacoesService.js             # ✅ Serviço de doações integrado com API
+│   └── MedicamentoService.js         # ✅ Serviço de medicamentos integrado com API
+
+├── styles/                             # Estilos globais e variáveis
+│   └── theme.css                      # Tema com cores e resets
+
+├── utils/                              # Funções auxiliares
+│   ├── masks.js                       # Máscaras de CPF, data, etc.
+│   └── validations.js                 # Funções de validação de formulários
+
+├── App.jsx / App.css                   # Estrutura principal da aplicação
+├── main.jsx                            # Entrada principal (ReactDOM.render)
+
 ```
 
 ## 🎨 Sistema de Modais
@@ -237,15 +258,15 @@ npm run dev
 
 ### Status de Integração
 
-| Módulo           | Status                    | Funcionalidades              | Banco de Dados |
-| ---------------- | ------------------------- | ---------------------------- | -------------- |
-| Dashboard        | 🟡 Parcial                | Estatísticas básicas         | localStorage   |
-| Usuários         | 🔴 Local                  | CRUD básico                  | localStorage   |
-| **🆕 Assistidas** | **🟢 Completo**           | **CRUD + Filtros + Perfil**  | **localStorage + API Ready** |
-| Consultas        | 🔴 Local                  | CRUD básico                  | localStorage   |
-| **Medicamentos** | **🟢 Integrado**          | **CRUD completo**            | **MySQL API**  |
-| **Doações**      | **🟢 Integrado**          | **CRUD completo**            | **MySQL API**  |
-| Despesas         | 🔴 Local                  | CRUD básico                  | localStorage   |
+| Módulo            | Status           | Funcionalidades             | Banco de Dados               |
+| ----------------- | ---------------- | --------------------------- | ---------------------------- |
+| Dashboard         | 🟡 Parcial       | Estatísticas básicas        | localStorage                 |
+| Usuários          | 🔴 Local         | CRUD básico                 | localStorage                 |
+| **🆕 Assistidas** | **🟢 Completo**  | **CRUD + Filtros + Perfil** | **localStorage + API Ready** |
+| Consultas         | 🔴 Local         | CRUD básico                 | localStorage                 |
+| **Medicamentos**  | **🟢 Integrado** | **CRUD completo**           | **MySQL API**                |
+| **Doações**       | **🟢 Integrado** | **CRUD completo**           | **MySQL API**                |
+| Despesas          | 🔴 Local         | CRUD básico                 | localStorage                 |
 
 ### 🆕 Módulo Assistidas - Funcionalidades
 
@@ -273,7 +294,7 @@ Para usar os módulos integrados (Medicamentos, Doações e Assistidas), você p
 Backend: http://localhost:3003/api/
 ├── /medicamentos    # CRUD completo de medicamentos ✅
 ├── /doacoes        # CRUD completo de doações ✅
-├── /assistidas     # CRUD completo de assistidas 🚀 (pronto p/ implementação)
+├── /assistidas     # CRUD completo de assistidas ✅
 └── /health         # Status da API
 ```
 
@@ -328,8 +349,10 @@ npm run setup-db
 ## 👥 Contribuindo
 
 1. Fork os projetos:
-   - Frontend: https://github.com/fabioaloisio/casa-mais-react
-   - Backend: https://github.com/fabioaloisio/casa-mais-backend
+
+   - Frontend: https://github.com/julianocamposcode/casa_mais/casa-mais-react
+   - Backend: https://github.com/julianocamposcode/casa_mais/casa-mais-backend
+
 2. Crie sua feature branch (`git checkout -b feature/NovaFeature`)
 3. Commit suas mudanças (`git commit -m 'Add: nova feature'`)
 4. Push para a branch (`git push origin feature/NovaFeature`)
