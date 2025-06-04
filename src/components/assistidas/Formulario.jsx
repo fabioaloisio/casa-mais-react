@@ -889,7 +889,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                                                                         <Form.Control
                                                                                             name={fieldName}
                                                                                             value={formData[fieldName] || ''}
-                                                                                            type={isNumberField ? "number" : "text"} 
+                                                                                            type={isNumberField ? "number" : "text"}
                                                                                             isInvalid={!!formErrors[fieldName]}
                                                                                             onChange={handleChange}
                                                                                         />
