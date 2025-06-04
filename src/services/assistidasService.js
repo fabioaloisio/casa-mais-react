@@ -50,7 +50,7 @@ export const assistidasService = {
       throw new Error('Erro ao excluir assistida. Tente novamente.');
     }
   },
-  
+
   obterEstatisticas: async (filtros = {}) => {
     try {
       const params = new URLSearchParams(filtros).toString();

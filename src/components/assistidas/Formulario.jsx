@@ -883,11 +883,13 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                                                         <tr key={i}>
                                                                             {["tipo", "idade", "tempo", "intensidade"].map((campo) => {
                                                                                 const fieldName = `droga${i}_${campo}`;
+                                                                                const isNumberField = campo === "idade";
                                                                                 return (
                                                                                     <td key={campo}>
                                                                                         <Form.Control
                                                                                             name={fieldName}
                                                                                             value={formData[fieldName] || ''}
+                                                                                            type={isNumberField ? "number" : "text"} 
                                                                                             isInvalid={!!formErrors[fieldName]}
                                                                                             onChange={handleChange}
                                                                                         />

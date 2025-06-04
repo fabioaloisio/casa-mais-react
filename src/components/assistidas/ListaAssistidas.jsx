@@ -20,7 +20,6 @@ const ListaAssistidas = ({ assistidas, onDelete, onEdit }) => {
                 </thead>
                 <tbody>
                     {
-
                         assistidas.length === 0 ? (
                             <tr>
                                 <td colSpan="6" className="text-center nenhum-registro">Nenhuma assistida cadastrada.</td>
