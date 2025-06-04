@@ -1,20 +1,24 @@
 import ConfirmModal from '../common/ConfirmModal';
 import PropTypes from 'prop-types';
+import { formatCPF } from '../../utils/masks';
+import './Assistidas.css'
 
 const ConfirmDeleteModal = ({ show, onHide, onConfirm, assistida, loading }) => {
   if (!assistida) return null;
 
   const detailsContent = (
     <div>
-      <div style={{ 
-        backgroundColor: '#f8f9fa', 
-        padding: '15px', 
+      <div style={{
+        backgroundColor: '#f8f9fa',
+        padding: '15px',
         borderRadius: '8px',
         marginBottom: '10px'
       }}>
         <strong>{assistida.nome}</strong><br />
-        <small className="text-muted">CPF: {assistida.cpf}</small><br />
-        <small className="text-muted">Status: {assistida.status}</small>
+        <small className="text-muted">CPF: {formatCPF(assistida.cpf)}</small><br />
+        <small className="text-muted">Status: <span className={`ms-2 badge status ${assistida.status?.toLowerCase()}`}>
+          {assistida.status}
+        </span></small>
       </div>
     </div>
   );

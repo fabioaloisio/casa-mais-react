@@ -6,6 +6,7 @@ import { assistidasService } from '../services/assistidasService';
 import Toast from '../components/common/Toast';
 import ConfirmDeleteModal from '../components/assistidas/ConfirmDeleteModal';
 import '../components/assistidas/Assistidas.css';
+import { FaPlus } from 'react-icons/fa';
 
 const Assistidas = () => {
   const [assistidas, setAssistidas] = useState([]);
@@ -17,16 +18,16 @@ const Assistidas = () => {
   const [filtroCPF, setFiltroCPF] = useState('');
   const [filtroIdade, setFiltroIdade] = useState('');
   const [stats, setStats] = useState(null);
-  
+
   // Estados para edição
   const [assistidaParaEditar, setAssistidaParaEditar] = useState(null);
   const [modoEdicao, setModoEdicao] = useState(false);
-  
+
   // Estados para exclusão
   const [assistidaToDelete, setAssistidaToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  
+
   // Estado para Toast
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
@@ -66,7 +67,7 @@ const Assistidas = () => {
   const adicionarAssistida = async (novaAssistida) => {
     try {
       let response;
-      
+
       if (modoEdicao && assistidaParaEditar) {
         // Modo edição
         response = await assistidasService.update(assistidaParaEditar.id, novaAssistida);
@@ -138,7 +139,7 @@ const Assistidas = () => {
     const filtroNomeMatch = filtroNome === '' || assistida.nome.toLowerCase().includes(filtroNome.toLowerCase());
     const filtroCPFMatch = filtroCPF === '' || assistida.cpf.replace(/\D/g, '').includes(filtroCPF.replace(/\D/g, ''));
     const filtroIdadeMatch = filtroIdade === '' || assistida.idade.toString().includes(filtroIdade);
-    
+
     return filtroStatusMatch && filtroNomeMatch && filtroCPFMatch && filtroIdadeMatch;
   });
 
@@ -182,8 +183,8 @@ const Assistidas = () => {
               <Card.Body>
                 <h6>Total{(filtroNome || filtroCPF || filtroIdade || filtroStatus) ? ' (Filtrado)' : ''}</h6>
                 <h3>
-                  {(filtroNome || filtroCPF || filtroIdade || filtroStatus) 
-                    ? assistidasFiltradas.length 
+                  {(filtroNome || filtroCPF || filtroIdade || filtroStatus)
+                    ? assistidasFiltradas.length
                     : stats.total
                   }
                 </h3>
@@ -235,31 +236,31 @@ const Assistidas = () => {
       {/* Controles de Filtro e Ações */}
       <Row className="mb-4">
         <Col md={12}>
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <Button 
-              variant="primary" 
-              className="btn-cadastrar" 
+          <div className="pai_filtros">
+            <Button
+              variant="primary"
+              className="btn-cadastrar"
               onClick={() => setShowModal(true)}
             >
-              Cadastrar Assistida
+              <FaPlus />Cadastrar Assistida
             </Button>
-            
-            <div className="d-flex gap-3 align-items-center filtros flex-wrap">
-              <Form.Group controlId="filtro-nome">
+
+            <div className="d-flex gap-3 align-items-center filtros">
+              <Form.Group controlId="filtro-nome" className='nome'>
                 <Form.Label>Nome:</Form.Label>
-                <Form.Control 
-                  type="text" 
+                <Form.Control
+                  type="text"
                   placeholder="Digite o nome..."
                   value={filtroNome}
                   onChange={(e) => setFiltroNome(e.target.value)}
-                  style={{ minWidth: '200px' }}
+                  style={{ minWidth: '100px' }}
                 />
               </Form.Group>
 
               <Form.Group controlId="filtro-cpf">
                 <Form.Label>CPF:</Form.Label>
-                <Form.Control 
-                  type="text" 
+                <Form.Control
+                  type="text"
                   placeholder="000.000.000-00"
                   value={filtroCPF}
                   onChange={(e) => setFiltroCPF(e.target.value)}
@@ -267,23 +268,24 @@ const Assistidas = () => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="filtro-idade">
+              <Form.Group controlId="filtro-idade" className='idade'>
                 <Form.Label>Idade:</Form.Label>
-                <Form.Control 
-                  type="number" 
+                <Form.Control
+                  type="number"
                   placeholder="Ex: 25"
                   value={filtroIdade}
                   onChange={(e) => setFiltroIdade(e.target.value)}
                   style={{ minWidth: '100px' }}
+                  
                 />
               </Form.Group>
 
-              <Form.Group controlId="filtro-status">
+              <Form.Group controlId="filtro-status" className='statusF'>
                 <Form.Label>Status:</Form.Label>
-                <Form.Select 
-                  value={filtroStatus} 
+                <Form.Select
+                  value={filtroStatus}
                   onChange={(e) => setFiltroStatus(e.target.value)}
-                  style={{ minWidth: '150px' }}
+                  style={{ minWidth: '100px' }}
                 >
                   <option value="">Todos</option>
                   <option value="Ativa">Ativa</option>
@@ -294,11 +296,11 @@ const Assistidas = () => {
 
               {/* Botão para limpar filtros */}
               {(filtroNome || filtroCPF || filtroIdade || filtroStatus) && (
-                <Form.Group className="btn-limpar-container">
+                <Form.Group className='limpFiltro'>
                   <Form.Label>&nbsp;</Form.Label>
                   <div>
-                    <Button 
-                      variant="outline-secondary" 
+                    <Button
+                      variant="outline-secondary"
                       size="sm"
                       onClick={() => {
                         setFiltroNome('');
@@ -326,21 +328,22 @@ const Assistidas = () => {
             <small>Tente ajustar os filtros ou limpe-os para ver todas as assistidas.</small>
           </div>
         )}
-        
-        <ListaAssistidas 
-          assistidas={assistidasFiltradas} 
-          onDelete={handleDelete} 
-          onEdit={handleEdit} 
+
+        <ListaAssistidas
+          assistidas={assistidasFiltradas}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
         />
       </div>
 
       {/* Modal de Cadastro */}
-      <Formulario 
-        showModal={showModal} 
-        setShowModal={fecharModal} 
+      <Formulario
+        showModal={showModal}
+        setShowModal={fecharModal}
         onSubmit={adicionarAssistida}
         assistidaParaEditar={assistidaParaEditar}
         modoEdicao={modoEdicao}
+        listaAssistidas={assistidas}
       />
 
       {/* Modal de Confirmação de Exclusão */}

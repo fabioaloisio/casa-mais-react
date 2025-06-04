@@ -41,19 +41,23 @@
   font-size: 2rem;
 }
 
-/* Filtros e busca */
-.filtros {
+.pai_filtros {
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
 }
 
-.filtros label {
-  font-weight: bold;
-  margin-right: 10px;
-  color: #333;
-  min-width: 4rem;
+.limpFiltro {
+  width: 115px;
+  text-align: center;
+}
+
+.statusF {
+  width: 140px;
+}
+.idade {
+  width: 1rem;
+  margin-right: 5.2rem;
 }
 
 .filtros select,
@@ -63,7 +67,6 @@
   border-radius: 6px;
   background-color: #fff;
   font-size: 14px;
-  min-width: 150px;
 }
 
 /* Botão cadastrar */
@@ -190,12 +193,12 @@
   .topo h1 {
     font-size: 22px;
   }
-  
+
   .filtros {
     flex-wrap: wrap;
     gap: 0.75rem;
   }
-  
+
   .filtros select,
   .filtros input {
     min-width: 120px;
@@ -211,17 +214,17 @@
   .topo h1 {
     font-size: 20px;
   }
-  
+
   .topo p {
     font-size: 13px;
   }
-  
+
   /* Layout responsivo para filtros */
   .d-flex.justify-content-between {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   /* Filtros em grid no mobile */
   .filtros {
     display: grid;
@@ -229,16 +232,16 @@
     gap: 0.75rem;
     width: 100%;
   }
-  
+
   .filtros .form-group {
     margin-bottom: 0;
   }
-  
+
   .filtros label {
     font-size: 0.875rem;
     margin-bottom: 5px;
   }
-  
+
   .filtros select,
   .filtros input {
     width: 100%;
@@ -257,40 +260,40 @@
     width: 100%;
     margin-bottom: 1rem;
   }
-  
+
   /* Stats cards responsivos */
   .stats-card {
     margin-bottom: 1rem;
   }
-  
+
   .stats-card h6 {
     font-size: 0.8rem;
   }
-  
+
   .stats-card h3 {
     font-size: 1.5rem;
   }
-  
+
   /* Tabela com scroll horizontal */
   .tabela-container {
     margin: 0 -1rem;
     padding: 0 1rem;
     border-radius: 0;
   }
-  
+
   .tabela-assistidas th,
   .tabela-assistidas td {
     padding: 10px 8px;
     font-size: 0.875rem;
   }
-  
+
   /* Botões menores no mobile */
   .btn-editar,
   .btn-excluir {
     padding: 6px 8px;
     font-size: 0.75rem;
   }
-  
+
   /* Stack dos botões no mobile */
   .d-flex.gap-2.justify-content-center {
     flex-direction: column;
@@ -303,37 +306,37 @@
   .topo h1 {
     font-size: 18px;
   }
-  
+
   .topo p {
     font-size: 12px;
     line-height: 150%;
   }
-  
+
   /* Cards em coluna única */
   .row {
     margin-left: 0;
     margin-right: 0;
   }
-  
+
   .col-md-3 {
     padding-left: 0;
     padding-right: 0;
   }
-  
+
   /* Tabela ainda menor */
   .tabela-assistidas {
     min-width: 600px;
   }
-  
+
   .tabela-assistidas th,
   .tabela-assistidas td {
     padding: 8px 6px;
     font-size: 0.8rem;
   }
-  
+
   /* Indicador de scroll */
   .tabela-container::after {
-    content: '→ Deslize para ver mais';
+    content: "→ Deslize para ver mais";
     display: block;
     text-align: center;
     padding: 10px;
@@ -341,15 +344,15 @@
     font-size: 0.75rem;
     background-color: #f8f9fa;
   }
-  
+
   .tabela-container::-webkit-scrollbar {
     height: 8px;
   }
-  
+
   .tabela-container::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
-  
+
   .tabela-container::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 4px;
@@ -460,19 +463,19 @@ fieldset.field legend {
     height: 40px;
     font-size: 0.875rem;
   }
-  
+
   .step-indicator .step-label {
     font-size: 0.75rem;
   }
-  
+
   fieldset.field {
     padding: 15px;
   }
-  
+
   fieldset.field legend {
     font-size: 1rem;
   }
-  
+
   /* Campos de formulário ocupam linha inteira no mobile */
   .col-md-2,
   .col-md-3,
@@ -481,18 +484,29 @@ fieldset.field legend {
     flex: 0 0 100%;
     max-width: 100%;
   }
-  
+
   /* Modal footer responsivo */
   .modal-footer {
     flex-direction: column !important;
     gap: 10px;
   }
-  
+
   .modal-footer > div {
     width: 100%;
   }
-  
+
   .modal-footer .btn {
     width: 100%;
   }
+}
+
+.fade.modal.show {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+
+.voltar {
+  position: fixed;
+  z-index: 10;
+  right: 3.5rem;
 }

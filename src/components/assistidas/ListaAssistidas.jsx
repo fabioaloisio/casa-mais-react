@@ -45,15 +45,15 @@ const ListaAssistidas = ({ assistidas, onDelete, onEdit }) => {
                                             >
                                                 <FaEdit /> Editar
                                             </button>
-                                            
+
                                             <button
                                                 className="btn-excluir"
                                                 onClick={() => onDelete(assistida)}
                                             >
                                                 <FaTrash /> Excluir
                                             </button>
-                                            
-                                            <Link 
+
+                                            <Link
                                                 className="btn btn-outline-info btn-sm d-flex align-items-center gap-1"
                                                 to={`/assistidas/${assistida.id}/detalhes`}
                                             >

@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Table } from 'react-bootstrap';
 import { FaArrowLeft, FaUser, FaMapMarkerAlt, FaPhone, FaCalendarAlt, FaFileAlt } from 'react-icons/fa';
 import { assistidasService } from '../services/assistidasService';
-import { formatCPF, formatRG } from '../utils/masks';
+import { formatCPF, formatRG, formatTelefone } from '../utils/masks';
 import { BsCapsule, BsDropletHalf, BsHospital } from 'react-icons/bs';
+import '../components/assistidas/Assistidas.css'
 
 const DetalhesAssistida = () => {
     const { id } = useParams();
@@ -16,7 +17,6 @@ const DetalhesAssistida = () => {
         carregarAssistida();
     }, [id]);
 
-    console.log(assistida)
 
     const carregarAssistida = async () => {
         try {
@@ -98,12 +98,12 @@ const DetalhesAssistida = () => {
                 <Col>
                     <div className="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 className="text-primary">
-                                <FaUser className="me-2" /> Perfil da Assistida
+                            <h2 className="text-primary d-flex align-items-center gap-1">
+                                <FaUser className="me-2" /> <span>{assistida.nome}</span>
                             </h2>
-                            <p className="text-muted">Dados completos da assistida {assistida.nome}</p>
+                            <p className="text-muted mt-3">Dados completos e descrição detalhada da assistida</p>
                         </div>
-                        <Button variant="outline-primary" onClick={() => navigate('/assistidas')}>
+                        <Button variant="outline-primary" onClick={() => navigate('/assistidas')} className='voltar'>
                             <FaArrowLeft className="me-2" /> Voltar
                         </Button>
                     </div>
@@ -129,11 +129,9 @@ const DetalhesAssistida = () => {
                                     <p><strong>Nacionalidade:</strong> {assistida.nacionalidade || '-'}</p>
                                     <p><strong>Estado Civil:</strong> {assistida.estado_civil || '-'}</p>
                                     <p><strong>Profissão:</strong> {assistida.profissao || '-'}</p>
-                                    <p><strong>Escolaridade:</strong> {assistida.escolaridade || '-'}</p>
+                                    <p><strong>Escolaridade:</strong> Ensino {assistida.escolaridade || '-'}</p>
                                     <p><strong>Status:</strong>
-                                        <span className={`ms-2 badge ${assistida.status === 'Ativa' ? 'bg-success' :
-                                            assistida.status === 'Inativa' ? 'bg-danger' : 'bg-warning'
-                                            }`}>
+                                        <span className={`ms-2 badge status ${assistida.status?.toLowerCase()}`}>
                                             {assistida.status || '-'}
                                         </span>
                                     </p>
@@ -162,8 +160,10 @@ const DetalhesAssistida = () => {
                     <Card>
                         <Card.Header><FaPhone className="me-2" /> Contato</Card.Header>
                         <Card.Body>
-                            <p><strong>Telefone:</strong> {assistida.telefone || '-'}</p>
-                            <p><strong>Telefone de Contato:</strong> {assistida.telefone_contato || '-'}</p>
+                            <p><strong>Telefone:</strong> {formatTelefone(assistida.telefone)}</p>
+                            {assistida.telefone_contato && (
+                                <p><strong>Telefone de Contato:</strong> {formatTelefone(assistida.telefone_contato)}</p>
+                            )}
                         </Card.Body>
                     </Card>
                 </Col>
@@ -178,7 +178,10 @@ const DetalhesAssistida = () => {
                                 <Col>
                                     <p><strong>Data do Último Atendimento:</strong> {formatarData(assistida.data_atendimento)}</p>
                                     <p><strong>Hora:</strong> {assistida.hora || '-'}</p>
-                                    <p><strong>Tempo sem Uso:</strong> {assistida.tempo_sem_uso || '-'}</p>
+                                    {assistida.tempo_sem_uso && (
+                                        <p><strong>Tempo sem Uso:</strong> {assistida.tempo_sem_uso}</p>
+                                    )}
+
                                     {assistida.motivacao_internacoes && (
                                         <p><strong>Motivação das Internações:</strong> {assistida.motivacao_internacoes}</p>
                                     )}

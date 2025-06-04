@@ -7,10 +7,10 @@ export const masks = {
   valor: (value) => {
     // Remove tudo exceto números
     const cleanValue = value.replace(/\D/g, '');
-    
+
     // Converte para número e divide por 100 para ter centavos
     const numericValue = parseFloat(cleanValue) / 100;
-    
+
     // Formata como moeda brasileira
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -34,11 +34,11 @@ export const formatCNPJ = (cnpj) => {
 // Formatar valor monetário
 export const formatCurrency = (value) => {
   if (!value) return 'R$ 0,00';
-  
-  const numericValue = typeof value === 'string' 
+
+  const numericValue = typeof value === 'string'
     ? parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'))
     : value;
-    
+
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL'
@@ -84,18 +84,18 @@ export const formatCEP = (cep) => {
 
 export const formatData = (dataString) => {
   if (!dataString) return '';
-  
+
   // Se já está no formato DD/MM/YYYY, retorna como está
   if (dataString.includes('/')) {
     return dataString;
   }
-  
+
   // Se está no formato ISO (YYYY-MM-DD), converte para DD/MM/YYYY
   if (dataString.includes('-')) {
     const [ano, mes, dia] = dataString.split('-');
     return `${dia}/${mes}/${ano}`;
   }
-  
+
   // Se é um objeto Date
   if (dataString instanceof Date) {
     const dia = String(dataString.getDate()).padStart(2, '0');
@@ -103,40 +103,62 @@ export const formatData = (dataString) => {
     const ano = dataString.getFullYear();
     return `${dia}/${mes}/${ano}`;
   }
-  
+
   return dataString;
 };
 
+// export const formatDataForInput = (dataString) => {
+//   if (!dataString) return '';
+
+//   // Se está no formato DD/MM/YYYY, converte para YYYY-MM-DD
+//   if (dataString.includes('/')) {
+//     const [dia, mes, ano] = dataString.split('/');
+//     return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+//   }
+
+//   // Se já está no formato ISO, retorna como está
+//   if (dataString.includes('-')) {
+//     return dataString;
+//   }
+
+//   return dataString;
+// };
+
 export const formatDataForInput = (dataString) => {
   if (!dataString) return '';
-  
+
   // Se está no formato DD/MM/YYYY, converte para YYYY-MM-DD
   if (dataString.includes('/')) {
     const [dia, mes, ano] = dataString.split('/');
     return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
   }
-  
-  // Se já está no formato ISO, retorna como está
-  if (dataString.includes('-')) {
+
+  // Se estiver no formato ISO completo, extrai só a parte da data
+  if (dataString.includes('T')) {
+    return dataString.split('T')[0];
+  }
+
+  // Se já está no formato YYYY-MM-DD, retorna como está
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dataString)) {
     return dataString;
   }
-  
-  return dataString;
+
+  return '';
 };
 
 export const calcularIdadePorDataNascimento = (dataNascimento) => {
   if (!dataNascimento) return null;
-  
+
   const hoje = new Date();
   const nascimento = new Date(dataNascimento);
-  
+
   let idade = hoje.getFullYear() - nascimento.getFullYear();
   const mesAtual = hoje.getMonth();
   const mesNascimento = nascimento.getMonth();
-  
+
   if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
     idade--;
   }
-  
+
   return idade >= 0 ? idade : null;
 };
