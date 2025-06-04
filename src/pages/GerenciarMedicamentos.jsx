@@ -1,10 +1,11 @@
-//Aldruin Bonfim de Lima Souza - RA 10482416915
+// Aldruin Bonfim de Lima Souza - RA 10482416915
 import React, { useState, useEffect } from 'react';
 import TabelaMedicamentos from '../components/medicamentos/TabelaMedicamentos';
 import ModalCadastroMedicamento from '../components/medicamentos/ModalCadastroMedicamento';
 import ModalEditarMedicamento from '../components/medicamentos/ModalEditarMedicamento';
 import ModalExclusaoMedicamento from '../components/medicamentos/ModalExclusaoMedicamento';
 import { MedicamentoService } from '../services/MedicamentoService';
+import Toast from '../components/common/Toast';
 import './GerenciarMedicamentos.css';
 
 const GerenciarMedicamentos = () => {
@@ -14,6 +15,22 @@ const GerenciarMedicamentos = () => {
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [isModalCadastroOpen, setIsModalCadastroOpen] = useState(false);
+  const [modalEditarAberto, setModalEditarAberto] = useState(false);
+  const [modalExcluirAberto, setModalExcluirAberto] = useState(false);
+
+  const [medSelecionado, setMedSelecionado] = useState(null);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+
+  const mostrarToast = (mensagem, tipo = 'success') => {
+    setToast({ show: true, message: mensagem, type: tipo });
+  };
 
   useEffect(() => {
     carregarMedicamentos();
@@ -33,14 +50,7 @@ const GerenciarMedicamentos = () => {
     }
   };
 
-  const [isModalCadastroOpen, setIsModalCadastroOpen] = useState(false);
-  const [modalEditarAberto, setModalEditarAberto] = useState(false);
-  const [modalExcluirAberto, setModalExcluirAberto] = useState(false);
-
-  const [medSelecionado, setMedSelecionado] = useState(null);
-
   const tiposUnicos = [...new Set(medicamentos.map((m) => m.tipo))];
-
 
   const abrirModalEditar = (med) => {
     setMedSelecionado(med);
@@ -64,12 +74,13 @@ const GerenciarMedicamentos = () => {
       const response = await MedicamentoService.criar(novoMedicamento);
       if (response.success) {
         await carregarMedicamentos();
+        mostrarToast('Medicamento cadastrado com sucesso!', 'success');
         fecharModais();
       } else {
-        alert('Erro ao cadastrar medicamento: ' + response.message);
+        mostrarToast('Erro ao cadastrar medicamento: ' + response.message, 'error');
       }
     } catch (error) {
-      alert('Erro ao cadastrar medicamento: ' + error.message);
+      mostrarToast('Erro ao cadastrar medicamento: ' + error.message, 'error');
     }
   };
 
@@ -78,12 +89,13 @@ const GerenciarMedicamentos = () => {
       const response = await MedicamentoService.atualizar(medAtualizado.id, medAtualizado);
       if (response.success) {
         await carregarMedicamentos();
+        mostrarToast('Medicamento atualizado com sucesso!', 'success');
         fecharModais();
       } else {
-        alert('Erro ao atualizar medicamento: ' + response.message);
+        mostrarToast('Erro ao atualizar medicamento: ' + response.message, 'error');
       }
     } catch (error) {
-      alert('Erro ao atualizar medicamento: ' + error.message);
+      mostrarToast('Erro ao atualizar medicamento: ' + error.message, 'error');
     }
   };
 
@@ -91,13 +103,14 @@ const GerenciarMedicamentos = () => {
     try {
       const response = await MedicamentoService.excluir(medSelecionado.id);
       if (response.success) {
-        await carregarMedicamentos();
         fecharModais();
+        await carregarMedicamentos();
+        mostrarToast('Medicamento excluído com sucesso!', 'success');
       } else {
-        alert('Erro ao excluir medicamento: ' + response.message);
+        mostrarToast('Erro ao excluir medicamento: ' + response.message, 'error');
       }
     } catch (error) {
-      alert('Erro ao excluir medicamento: ' + error.message);
+      mostrarToast('Erro ao excluir medicamento: ' + error.message, 'error');
     }
   };
 
@@ -138,7 +151,9 @@ const GerenciarMedicamentos = () => {
 
       <div className="top-bar">
         <button
-          className="btn-cadastrar" onClick={() => setIsModalCadastroOpen(true)}>
+          className="btn-cadastrar"
+          onClick={() => setIsModalCadastroOpen(true)}
+        >
           Cadastrar Medicamento
         </button>
 
@@ -195,6 +210,13 @@ const GerenciarMedicamentos = () => {
           onConfirm={confirmarExclusao}
         />
       )}
+
+      <Toast
+        show={toast.show}
+        onClose={() => setToast({ ...toast, show: false })}
+        message={toast.message}
+        type={toast.type}
+      />
     </div>
   );
 };
