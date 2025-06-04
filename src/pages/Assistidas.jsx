@@ -55,7 +55,7 @@ const Assistidas = () => {
       const estatisticas = await assistidasService.obterEstatisticas();
       setStats(estatisticas);
     } catch (err) {
-      console.error('Erro ao carregar estatísticas:', err);
+      console.error('Erro ao carregar estatística:', err);
     }
   };
 
