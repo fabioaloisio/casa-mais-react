@@ -2,39 +2,57 @@
 
 Interface web do sistema de gestão para a organização social Casa de Lázaro de Betânia.
 
-## 📚 Repositórios
+## 📋 Informações do Projeto
 
-- **Frontend React**: https://github.com/julianocamposcode/casa_mais/casa-mais-react
-- **Backend Node.js**: https://github.com/julianocamposcode/casa_mais/casa-mais-backend
+- **Nome do Pacote**: casa-mais-react
+- **Versão**: 0.0.0
+- **Tipo**: module (ES Modules)
+
+## 📚 Estrutura do Projeto
+
+Este projeto está dividido em dois repositórios:
+- **Frontend (este diretório)**: Aplicação React
+- **Backend**: API Node.js/Express (disponível em `/backend`)
 
 ## 🚀 Tecnologias
 
+### Dependências Principais
 - **React 19.1.0** - Biblioteca para construção de interfaces
-- **Vite 6.3.5** - Build tool com HMR (Hot Module Replacement)
+- **React DOM 19.1.0** - Renderização React para web
 - **React Router DOM 7.6.1** - Roteamento de páginas
 - **Bootstrap 5.3.6** + **React Bootstrap 2.10.10** - Framework UI responsivo
-- **React Icons 5.5.0** - Ícones (Font Awesome)
-- **React Input Mask 2.0.4** - Máscaras de input
+- **React Icons 5.5.0** - Biblioteca de ícones
+- **React Input Mask 2.0.4** - Máscaras de input para formulários
+- **React IMask 7.6.1** - Máscaras avançadas de input
 - **PropTypes 15.8.1** - Validação de tipos
-- **Design Responsivo** - Mobile-first com breakpoints para tablet e desktop
+
+### Ferramentas de Desenvolvimento
+
+- **Vite 6.3.5** - Build tool com HMR (Hot Module Replacement)
+- **ESLint 9.18.0** - Linter para JavaScript
+- **@vitejs/plugin-react 4.3.5** - Plugin React para Vite
+- **globals 15.14.0** - Variáveis globais para ESLint
 
 ## 🚀 Início Rápido
 
-### 1. Clone o Frontend
+### 1. Pré-requisitos
 
-```bash
-# Clone este repositório
-git clone https://github.com/fabioaloisio/casa-mais-react.git
-cd casa-mais-react
-```
+- Node.js 16+ e npm/yarn instalados
+- Backend do Casa Mais rodando (porta 3003)
 
 ### 2. Instalação
 
 ```bash
+# A partir do diretório principal do projeto
+cd frontend
+
 # Instalar dependências
 npm install
 
-# Configurar variáveis de ambiente
+# Copiar arquivo de configuração
+cp .env.example .env
+
+# Ou criar manualmente
 echo "VITE_API_URL=http://localhost:3003/api" > .env
 
 # Iniciar servidor de desenvolvimento
@@ -82,11 +100,16 @@ src/
 │   │   ├── ModalExclusaoMedicamento.jsx # Modal de exclusão
 │   │   └── TabelaMedicamentos.jsx      # Tabela geral de medicamentos
 │
-│   └── usuarios/                      # Componentes para usuários do sistema
-│       └── UsuarioModal.jsx           # Modal de cadastro/edição de usuário
+│   ├── usuarios/                      # Componentes para usuários do sistema
+│   │   └── UsuarioModal.jsx           # Modal de cadastro/edição de usuário
+│
+│   ├── Layout.jsx / Layout.css        # Layout principal com sidebar
+│   ├── Logo.jsx                       # Componente do logo
+│   ├── Sidebar.jsx / Sidebar.css      # Navegação lateral
+│   └── TitleHandler.jsx               # Gerenciador de títulos de página
 
 ├── config/                             # Configurações globais da aplicação
-│   └── api.js                         # URL base e setup do axios
+│   └── api.js                         # Configuração da API (URL base, headers, timeout)
 
 ├── pages/                              # Páginas principais do sistema
 │   ├── AgendarConsulta.jsx            # Página para agendar consultas
@@ -101,11 +124,11 @@ src/
 │   ├── EstoqueSaidas.jsx             # Saídas do estoque
 │   ├── GerenciarMedicamentos.jsx     # Tela de controle de medicamentos
 │   ├── GerenciarMedicamentos.css     # Estilo da tela de medicamentos
-│   ├── LancarDespesas.jsx            # Lançamento de despesas
+│   ├── LancarDespesa.jsx             # Lançamento de despesas
 │   └── Usuarios.jsx / .css            # Tela de administração de usuários
 
 ├── services/                           # 🟡 Camada de serviços (API)
-│   ├── api.js                         # ✅ Cliente HTTP genérico (Axios)
+│   ├── api.js                         # ✅ Cliente HTTP genérico (fetch nativo)
 │   ├── assistidasService.js          # ✅ Serviço de assistidas com API ready
 │   ├── doacoesService.js             # ✅ Serviço de doações integrado com API
 │   └── MedicamentoService.js         # ✅ Serviço de medicamentos integrado com API
@@ -118,8 +141,14 @@ src/
 │   └── validations.js                 # Funções de validação de formulários
 
 ├── App.jsx / App.css                   # Estrutura principal da aplicação
-├── main.jsx                            # Entrada principal (ReactDOM.render)
+├── Layout.jsx / Layout.css             # Layout principal com Sidebar
+├── Logo.jsx                            # Componente do logotipo
+├── Sidebar.jsx / Sidebar.css           # Navegação lateral responsiva
+├── TitleHandler.jsx                    # Gerenciador de títulos de página
+└── main.jsx                            # Entrada principal (ReactDOM.render)
 
+public/
+└── logocasa+.png                       # Logo da aplicação
 ```
 
 ## 🎨 Sistema de Modais
@@ -150,30 +179,33 @@ O projeto utiliza um sistema padronizado de modais com componentes base reutiliz
 VITE_API_URL=http://localhost:3003/api
 ```
 
-**⚠️ Importante**: Use o prefixo `VITE_` para variáveis de ambiente acessíveis no cliente.
+**⚠️ Importante**: 
+- Use o prefixo `VITE_` para variáveis de ambiente acessíveis no cliente
+- O arquivo `.env.example` já está configurado com as variáveis necessárias
 
 ### Serviços Disponíveis
 
-- **ApiService** - Cliente HTTP genérico com retry e error handling
+- **ApiService** - Cliente HTTP genérico com fetch nativo e error handling
+- **AssistidasService** - Serviço de gestão de assistidas
 - **DoacoesService** - Serviço completo para gestão de doações
-- **MedicamentosService** - Integração com API de medicamentos
+- **MedicamentoService** - Integração com API de medicamentos
 
 ### Recursos da Integração
 
-- ✅ Comunicação HTTP com retry automático
-- ✅ Loading states e error handling
+- ✅ Comunicação HTTP com error handling
+- ✅ Loading states e feedback visual
 - ✅ CORS configurado
 - ✅ Validação de dados no cliente e servidor
 - ✅ Formatação automática de datas (DD/MM/YYYY)
+- ✅ Máscaras de input (CPF, telefone, CEP, etc.)
 
 ### Como Integrar com o Backend
 
-#### 1. Clone e configure o backend
+#### 1. Configure e inicie o backend
 
 ```bash
-# Clone o repositório do backend
-git clone https://github.com/fabioaloisio/casa-mais-backend.git
-cd casa-mais-backend
+# A partir do diretório principal do projeto
+cd backend
 
 # Instale as dependências
 npm install
@@ -184,21 +216,21 @@ npm install
 echo "DB_HOST=localhost" > .env
 echo "DB_USER=root" >> .env
 echo "DB_PASSWORD=sua_senha" >> .env
-echo "DB_NAME=casa_mais" >> .env
+echo "DB_NAME=casamais_db" >> .env
 
 # Execute o setup do banco (cria tabelas)
-npm run setup-db
+node setup-db.js
 
-# Popule o banco de dados (opicional)
-npm run populate-db
+# Popule o banco de dados (opcional)
+node populate-db.js
 
 # Inicie o servidor
-npm run dev
+npm start
 ```
 
 #### 2. Acesse a aplicação
 
-- **Backend API**: `http://localhost:3003`
+- **Backend API**: `http://localhost:3003/api`
 - **Frontend**: `http://localhost:5173`
 
 ## 📱 Design Responsivo
@@ -291,7 +323,7 @@ Para usar os módulos integrados (Medicamentos, Doações e Assistidas), você p
 ### Estrutura da API
 
 ```
-Backend: http://localhost:3003/api/
+Backend: http://localhost:3003/api
 ├── /medicamentos    # CRUD completo de medicamentos ✅
 ├── /doacoes        # CRUD completo de doações ✅
 ├── /assistidas     # CRUD completo de assistidas ✅
@@ -342,18 +374,14 @@ curl http://localhost:3003/api/health
 
 ```bash
 # Execute o setup do banco novamente
-cd casa-mais-backend
-npm run setup-db
+cd backend
+node setup-db.js
 ```
 
 ## 👥 Contribuindo
 
-1. Fork os projetos:
-
-   - Frontend: https://github.com/julianocamposcode/casa_mais/casa-mais-react
-   - Backend: https://github.com/julianocamposcode/casa_mais/casa-mais-backend
-
+1. Faça um fork do projeto
 2. Crie sua feature branch (`git checkout -b feature/NovaFeature`)
 3. Commit suas mudanças (`git commit -m 'Add: nova feature'`)
 4. Push para a branch (`git push origin feature/NovaFeature`)
-5. Abra um Pull Request no repositório correspondente
+5. Abra um Pull Request
