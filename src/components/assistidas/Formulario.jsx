@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button, Col, Form, Modal, Row, Table, Alert, ProgressBar } from "react-bootstrap";
 import { IMaskInput } from "react-imask";
-import PropTypes, { number } from 'prop-types';
+import PropTypes from 'prop-types';
 import { formatDataForInput, calcularIdadePorDataNascimento } from "../../utils/masks";
 import { FaUser, FaHome, FaMedkit, FaHeartbeat, FaCheck, FaExclamationTriangle, FaTrash, FaBan } from 'react-icons/fa';
 import useUnsavedChanges from '../common/useUnsavedChanges';
@@ -74,18 +74,24 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         return normalized;
     };
 
+    // Estado para garantir que só detecte mudanças após carregar dados iniciais
+    const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
+    
     // Hook para gerenciar mudanças não salvas
-    // Normalizar os dados antes de comparar para evitar falsos positivos
-    const normalizedInitial = useMemo(() => normalizeFormData(initialData), [initialData]);
-    const normalizedCurrent = useMemo(() => normalizeFormData(formData), [formData]);
-    const { hasUnsavedChanges, confirmClose } = useUnsavedChanges(normalizedInitial, normalizedCurrent);
+    // Só passa os dados reais para comparação após carregamento completo
+    const { confirmClose } = useUnsavedChanges(
+        hasLoadedInitialData ? initialData : formData, 
+        formData
+    );
 
     const handleClose = () => {
         setShowModal(false);
         setStep(1);
         setFormData({ status: 'Ativa' });
+        setInitialData({});
         setFormErrors({});
         setCompletedSteps([]);
+        setHasLoadedInitialData(false);
     };
 
     const handleCloseWithConfirmation = () => {
@@ -157,17 +163,24 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                     dadosFormatados.quantidade_internacoes = 0;
                 }
 
-                const dadosNormalizados = normalizeFormData(dadosFormatados);
-                setFormData(dadosNormalizados);
-                setInitialData(dadosNormalizados);
+                // Garantir que a idade seja preservada se já existir
+                if (assistidaParaEditar.idade) {
+                    dadosFormatados.idade = assistidaParaEditar.idade.toString();
+                }
+                
+                setFormData(dadosFormatados);
+                setInitialData(dadosFormatados);
+                // Usar setTimeout para garantir que setState seja processado
+                setTimeout(() => setHasLoadedInitialData(true), 100);
             } else {
                 // Modo de criação - inicializar com dados vazios
-                const inicial = normalizeFormData({
+                const inicial = {
                     status: "Ativa",
                     nacionalidade: "Brasileira",
-                });
+                };
                 setFormData(inicial);
                 setInitialData(inicial);
+                setTimeout(() => setHasLoadedInitialData(true), 100);
             }
         } else {
             // Quando o modal fecha, resetar estados
@@ -552,7 +565,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                 { label: "Contato e Endereço", icon: FaHome },
                                 { label: "Histórico Médico I", icon: FaMedkit },
                                 { label: "Histórico Médico II", icon: FaHeartbeat }
-                            ].map(({ label, icon: Icon }, index) => (
+                            ].map((stepData, index) => (
                                 <div
                                     key={index}
                                     className={`step ${step === index + 1 ? 'active' : ''} ${completedSteps.includes(index + 1) && !modoEdicao ? 'completed' : ''}`}
@@ -563,11 +576,11 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                         {completedSteps.includes(index + 1) && !modoEdicao ? (
                                             <FaCheck />
                                         ) : (
-                                            <Icon />
+                                            <stepData.icon />
                                         )}
                                     </div>
 
-                                    <span className="step-label">{label}</span>
+                                    <span className="step-label">{stepData.label}</span>
                                 </div>
                             ))}
                         </div>
