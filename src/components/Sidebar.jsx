@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Nav, Accordion } from 'react-bootstrap'
-import { FaDonate, FaHome, FaIdCard, FaMoneyBillWave, FaPills, FaStethoscope, FaUsers, FaBars, FaTimes } from 'react-icons/fa'
+import { FaDonate, FaHome, FaIdCard, FaMoneyBillWave, FaPills, FaStethoscope, FaUsers, FaBars, FaTimes, FaUserTie } from 'react-icons/fa'
 import './Sidebar.css'
 import Logo from './logo'
 
@@ -78,6 +78,10 @@ function Sidebar() {
 
         <div className="menu-section">
           <div className="menu-section-title">Controle Financeiro</div>
+          <Nav.Link as={Link} onClick={closeSidebar} to="/doadores" className={location.pathname.includes('/doadores') ? 'active' : ''}>
+            <FaUserTie />
+            Gestão de Doadores
+          </Nav.Link>
           <Nav.Link as={Link} onClick={closeSidebar} to="/doacoes" className={location.pathname.includes('/doacoes') ? 'active' : ''}>
             <FaDonate />
             Gestão de Doações
