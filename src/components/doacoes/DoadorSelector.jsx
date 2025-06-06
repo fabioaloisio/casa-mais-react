@@ -144,7 +144,7 @@ const DoadorSelector = ({
                         variant="primary"
                         onClick={handleNewDoador}
                       >
-                        + Novo Doador
+                        + Cadastrar Doador
                       </Button>
                     </div>
                   </ListGroup.Item>

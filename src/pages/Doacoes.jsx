@@ -259,7 +259,7 @@ const Doacoes = () => {
           className="azul d-flex align-items-center gap-2"
           onClick={() => handleShowModal()}
         >
-          <FaPlus /> Nova Doação
+          <FaPlus /> Cadastrar Doação
         </Button>
 
         <div className="d-flex align-items-center gap-2">
