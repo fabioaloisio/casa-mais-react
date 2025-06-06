@@ -4,7 +4,6 @@ import { IMaskInput } from "react-imask";
 import PropTypes from 'prop-types';
 import { formatDataForInput, calcularIdadePorDataNascimento } from "../../utils/masks";
 import { FaUser, FaHome, FaMedkit, FaHeartbeat, FaCheck, FaExclamationTriangle, FaTrash, FaBan } from 'react-icons/fa';
-import useUnsavedChanges from '../common/useUnsavedChanges';
 
 import './Assistidas.css'
 
@@ -77,13 +76,6 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
     // Estado para garantir que só detecte mudanças após carregar dados iniciais
     const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
     
-    // Hook para gerenciar mudanças não salvas
-    // Só passa os dados reais para comparação após carregamento completo
-    const { confirmClose } = useUnsavedChanges(
-        hasLoadedInitialData ? initialData : formData, 
-        hasLoadedInitialData ? normalizeFormData(formData) : formData
-    );
-
     const handleClose = () => {
         setShowModal(false);
         setStep(1);
@@ -92,10 +84,6 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         setFormErrors({});
         setCompletedSteps([]);
         setHasLoadedInitialData(false);
-    };
-
-    const handleCloseWithConfirmation = () => {
-        confirmClose(handleClose);
     };
 
     // Efeito para carregar dados da assistida quando está editando
@@ -538,7 +526,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         <>
             <Modal
                 show={showModal}
-                onHide={handleCloseWithConfirmation}
+                onHide={handleClose}
                 size="xl"
                 centered
                 backdrop={true}
@@ -1174,7 +1162,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                         )}
                     </div>
                     <div className="d-flex gap-2">
-                        <Button variant="outline-danger" onClick={handleCloseWithConfirmation}>
+                        <Button variant="outline-danger" onClick={handleClose}>
                             Cancelar
                         </Button>
 
