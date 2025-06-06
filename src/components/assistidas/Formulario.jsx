@@ -4,6 +4,7 @@ import { IMaskInput } from "react-imask";
 import PropTypes, { number } from 'prop-types';
 import { formatDataForInput, calcularIdadePorDataNascimento } from "../../utils/masks";
 import { FaUser, FaHome, FaMedkit, FaHeartbeat, FaCheck, FaExclamationTriangle, FaTrash, FaBan } from 'react-icons/fa';
+import useUnsavedChanges from '../common/useUnsavedChanges';
 
 import './Assistidas.css'
 
@@ -14,8 +15,6 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
     const [initialData, setInitialData] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [completedSteps, setCompletedSteps] = useState([]);
-    const [showConfirmCancel, setShowConfirmCancel] = useState(false);
-
 
     // Função para normalizar dados do formulário (apenas campos relevantes)
     const normalizeFormData = (data) => {
@@ -75,13 +74,33 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         return normalized;
     };
 
+    // Hook para gerenciar mudanças não salvas
+    // Normalizar os dados antes de comparar para evitar falsos positivos
+    const normalizedInitial = useMemo(() => normalizeFormData(initialData), [initialData]);
+    const normalizedCurrent = useMemo(() => normalizeFormData(formData), [formData]);
+    const { hasUnsavedChanges, confirmClose } = useUnsavedChanges(normalizedInitial, normalizedCurrent);
+
     const handleClose = () => {
         setShowModal(false);
+        setStep(1);
+        setFormData({ status: 'Ativa' });
+        setFormErrors({});
+        setCompletedSteps([]);
+    };
+
+    const handleCloseWithConfirmation = () => {
+        confirmClose(handleClose);
     };
 
     // Efeito para carregar dados da assistida quando está editando
     useEffect(() => {
         if (showModal) {
+            // Sempre resetar o estado de submissão quando o modal abre
+            setIsSubmitting(false);
+            setFormErrors({});
+            setStep(1);
+            setCompletedSteps([]);
+            
             if (modoEdicao && assistidaParaEditar) {
                 const dadosFormatados = {
                     ...assistidaParaEditar,
@@ -140,26 +159,22 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
 
                 const dadosNormalizados = normalizeFormData(dadosFormatados);
                 setFormData(dadosNormalizados);
+                setInitialData(dadosNormalizados);
             } else {
-                const inicial = {
+                // Modo de criação - inicializar com dados vazios
+                const inicial = normalizeFormData({
                     status: "Ativa",
                     nacionalidade: "Brasileira",
-                };
-                setFormData(inicial);
-
-                // ✅ Limpar erros para campos preenchidos por padrão
-                setFormErrors((prevErrors) => {
-                    const novosErros = { ...prevErrors };
-                    for (const campo in novosErros) {
-                        if (inicial[campo]) {
-                            delete novosErros[campo];
-                        }
-                    }
-                    return novosErros;
                 });
-
-                setCompletedSteps([]);
+                setFormData(inicial);
+                setInitialData(inicial);
             }
+        } else {
+            // Quando o modal fecha, resetar estados
+            setIsSubmitting(false);
+            setFormErrors({});
+            setStep(1);
+            setCompletedSteps([]);
         }
     }, [modoEdicao, assistidaParaEditar, showModal]);
 
@@ -172,18 +187,6 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
             });
         }
     }, [formData.idade, formErrors.idade]);
-
-    // Limpar formulário quando fechar o modal
-    useEffect(() => {
-        if (!showModal) {
-            setStep(1);
-            setFormErrors({});
-            setCompletedSteps([]);
-            if (!modoEdicao) {
-                setFormData({ status: 'Ativa' });
-            }
-        }
-    }, [showModal, modoEdicao]);
 
 
     const handleChange = async (e) => {
@@ -519,7 +522,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
         <>
             <Modal
                 show={showModal}
-                onHide={() => { setShowConfirmCancel(true); }}
+                onHide={handleCloseWithConfirmation}
                 size="xl"
                 centered
                 backdrop={true}
@@ -1155,11 +1158,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                         )}
                     </div>
                     <div className="d-flex gap-2">
-                        <Button variant="outline-danger" onClick={() => {
-
-                            setShowConfirmCancel(true);
-
-                        }}>
+                        <Button variant="outline-danger" onClick={handleCloseWithConfirmation}>
                             Cancelar
                         </Button>
 
@@ -1177,14 +1176,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                                         if (validateAllSteps()) {
                                             const dadosProntos = formatarFormDataParaEnvio(formData);
                                             await onSubmit(dadosProntos);
-                                            setShowModal(false);
-                                            if (!modoEdicao) {
-                                                setFormData({ status: 'Ativa' });
-                                            }
-
-                                            setStep(1);
-                                            setFormErrors({});
-                                            setCompletedSteps([]);
+                                            handleClose();
                                         }
                                     } catch (error) {
                                         console.error('Erro ao salvar:', error);
@@ -1202,28 +1194,6 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                         )}
 
                     </div>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={showConfirmCancel} onHide={() => setShowConfirmCancel(false)} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmar saída</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Você tem certeza que deseja sair? Todos os dados não {modoEdicao ? 'atualizados' : 'salvos'} serão perdidos.
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowConfirmCancel(false)}>
-                        <FaBan />
-                        Cancelar
-                    </Button>
-                    <Button variant="danger" onClick={() => {
-                        setShowConfirmCancel(false);
-                        handleClose(); // função que fecha o modal principal
-                    }}>
-                        <FaTrash />
-                        Sim, sair
-                    </Button>
                 </Modal.Footer>
             </Modal>
         </>

@@ -11,12 +11,14 @@ Interface web do sistema de gestão para a organização social Casa de Lázaro 
 ## 📚 Estrutura do Projeto
 
 Este projeto está dividido em dois repositórios:
+
 - **Frontend (este diretório)**: Aplicação React
 - **Backend**: API Node.js/Express (disponível em `/backend`)
 
 ## 🚀 Tecnologias
 
 ### Dependências Principais
+
 - **React 19.1.0** - Biblioteca para construção de interfaces
 - **React DOM 19.1.0** - Renderização React para web
 - **React Router DOM 7.6.1** - Roteamento de páginas
@@ -72,66 +74,70 @@ npm run dev
 
 ```
 src/
-├── components/                         # Componentes reutilizáveis da interface
-│   ├── assistidas/                    # Componentes específicos para gestão de assistidas
-│   │   ├── Assistidas.css             # Estilização da página de assistidas
-│   │   ├── ConfirmDeleteModal.jsx     # Modal de confirmação para exclusão
-│   │   ├── form.css                   # Estilo dos formulários de assistidas
-│   │   ├── Formulario.jsx             # Formulário completo de assistidas
-│   │   ├── FormularioSimples.jsx      # Versão simplificada do formulário
-│   │   ├── internacoes.jsx            # Listagem de internações vinculadas
-│   │   └── ListaAssistidas.jsx        # Tabela com filtro e ações
+├── components/                           # Componentes reutilizáveis da interface
+│   ├── assistidas/                       # Componentes específicos para gestão de assistidas
+│   │   ├── Assistidas.css                # Estilização da página de assistidas
+│   │   ├── ConfirmDeleteModal.jsx        # Modal de confirmação para exclusão
+│   │   ├── form.css                      # Estilo dos formulários de assistidas
+│   │   ├── Formulario.jsx                # Formulário completo de assistidas
+│   │   ├── FormularioSimples.jsx         # Versão simplificada do formulário
+│   │   ├── internacoes.jsx               # Listagem de internações vinculadas
+│   │   └── ListaAssistidas.jsx           # Tabela com filtro e ações
 │
-│   ├── common/                        # Componentes genéricos reutilizáveis
-│   │   ├── BaseModal.jsx              # Modal base padrão
-│   │   ├── ConfirmModal.jsx           # Modal de confirmação
-│   │   ├── FormModal.jsx              # Modal com formulário interno
-│   │   ├── Toast.jsx                  # Notificações do tipo toast
-│   │   └── useUnsavedChanges.js       # Hook para detectar mudanças não salvas
+│   ├── common/                           # Componentes genéricos reutilizáveis
+│   │   ├── BaseModal.jsx                 # Modal base padrão
+│   │   ├── ConfirmModal.jsx              # Modal de confirmação
+│   │   ├── FormModal.jsx                 # Modal com formulário interno
+│   │   ├── Toast.jsx                     # Notificações do tipo toast
+│   │   └── useUnsavedChanges.js          # Hook para detectar mudanças não salvas
 │
-│   ├── doacoes/                       # Componentes relacionados a doações
-│   │   ├── ConfirmDeleteModal.jsx     # Modal de confirmação de exclusão
-│   │   ├── DoacaoModal.css            # Estilo do modal de doações
-│   │   └── DoacaoModal.jsx            # Modal para cadastrar/editar doações
+│   ├── doacoes/                          # Componentes relacionados a doações e doadores
+│   │   ├── ConfirmDeleteModal.jsx        # Modal de confirmação de exclusão
+│   │   ├── DoacaoModal.css               # Estilo do modal de doações
+│   │   ├── DoacaoModal.jsx               # Modal para cadastrar/editar doações
+│   │   ├── DoadorFormModal.jsx           # Modal para cadastrar/editar doadores
+│   │   └── DoadorSelector.jsx            # Componente de seleção de doadores
 │
-│   ├── medicamentos/                  # Componentes para medicamentos
-│   │   ├── ModalCadastroMedicamento.jsx # Modal de criação
-│   │   ├── ModalEditarMedicamento.jsx  # Modal de edição
-│   │   ├── ModalExclusaoMedicamento.jsx # Modal de exclusão
-│   │   └── TabelaMedicamentos.jsx      # Tabela geral de medicamentos
+│   ├── medicamentos/                     # Componentes para medicamentos
+│   │   ├── ModalCadastroMedicamento.jsx  # Modal de criação
+│   │   ├── ModalEditarMedicamento.jsx    # Modal de edição
+│   │   ├── ModalExclusaoMedicamento.jsx  # Modal de exclusão
+│   │   └── TabelaMedicamentos.jsx        # Tabela geral de medicamentos
 │
-│   ├── usuarios/                      # Componentes para usuários do sistema
-│   │   └── UsuarioModal.jsx           # Modal de cadastro/edição de usuário
+│   ├── usuarios/                         # Componentes para usuários do sistema
+│   │   └── UsuarioModal.jsx              # Modal de cadastro/edição de usuário
 │
-│   ├── Layout.jsx / Layout.css        # Layout principal com sidebar
-│   ├── Logo.jsx                       # Componente do logo
-│   ├── Sidebar.jsx / Sidebar.css      # Navegação lateral
-│   └── TitleHandler.jsx               # Gerenciador de títulos de página
+│   ├── Layout.jsx / Layout.css           # Layout principal com sidebar
+│   ├── Logo.jsx                          # Componente do logo
+│   ├── Sidebar.jsx / Sidebar.css         # Navegação lateral
+│   └── TitleHandler.jsx                  # Gerenciador de títulos de página
 
-├── config/                             # Configurações globais da aplicação
-│   └── api.js                         # Configuração da API (URL base, headers, timeout)
+├── config/                               # Configurações globais da aplicação
+│   └── api.js                            # Configuração da API (URL base, headers, timeout)
 
-├── pages/                              # Páginas principais do sistema
-│   ├── AgendarConsulta.jsx            # Página para agendar consultas
-│   ├── Assistidas.jsx                 # Página de gestão de assistidas
-│   ├── CadastroUsuario.jsx            # Cadastro de novo usuário
-│   ├── Consultas.jsx                  # Histórico de consultas
-│   ├── Dashboard.jsx / .css           # Painel com indicadores
-│   ├── Despesas.jsx                   # Controle de despesas
-│   ├── DetalhesAssistida.jsx          # Perfil completo da assistida
-│   ├── Doacoes.jsx / .css             # Página de doações
-│   ├── EstoqueEntradas.jsx           # Entradas no estoque
-│   ├── EstoqueSaidas.jsx             # Saídas do estoque
-│   ├── GerenciarMedicamentos.jsx     # Tela de controle de medicamentos
-│   ├── GerenciarMedicamentos.css     # Estilo da tela de medicamentos
-│   ├── LancarDespesa.jsx             # Lançamento de despesas
-│   └── Usuarios.jsx / .css            # Tela de administração de usuários
+├── pages/                                # Páginas principais do sistema
+│   ├── AgendarConsulta.jsx               # Página para agendar consultas
+│   ├── Assistidas.jsx                    # Página de gestão de assistidas
+│   ├── CadastroUsuario.jsx               # Cadastro de novo usuário
+│   ├── Consultas.jsx                     # Histórico de consultas
+│   ├── Dashboard.jsx / .css              # Painel com indicadores
+│   ├── Despesas.jsx                      # Controle de despesas
+│   ├── DetalhesAssistida.jsx             # Perfil completo da assistida
+│   ├── Doadores.jsx                      # Página de gestão de doadores
+│   ├── Doacoes.jsx / .css                # Página de doações
+│   ├── EstoqueEntradas.jsx               # Entradas no estoque
+│   ├── EstoqueSaidas.jsx                 # Saídas do estoque
+│   ├── GerenciarMedicamentos.jsx         # Tela de controle de medicamentos
+│   ├── GerenciarMedicamentos.css         # Estilo da tela de medicamentos
+│   ├── LancarDespesa.jsx                 # Lançamento de despesas
+│   └── Usuarios.jsx / .css               # Tela de administração de usuários
 
-├── services/                           # 🟡 Camada de serviços (API)
-│   ├── api.js                         # ✅ Cliente HTTP genérico (fetch nativo)
-│   ├── assistidasService.js          # ✅ Serviço de assistidas com API ready
-│   ├── doacoesService.js             # ✅ Serviço de doações integrado com API
-│   └── MedicamentoService.js         # ✅ Serviço de medicamentos integrado com API
+├── services/                             # 🟢 Camada de serviços (API)
+│   ├── api.js                            # ✅ Cliente HTTP genérico (fetch nativo)
+│   ├── assistidasService.js              # ✅ Serviço de assistidas com API ready
+│   ├── doacoesService.js                 # ✅ Serviço de doações integrado com API
+│   ├── doadoresService.js                # ✅ Serviço de doadores integrado com API
+│   └── MedicamentoService.js             # ✅ Serviço de medicamentos integrado com API
 
 ├── styles/                             # Estilos globais e variáveis
 │   └── theme.css                      # Tema com cores e resets
@@ -179,7 +185,8 @@ O projeto utiliza um sistema padronizado de modais com componentes base reutiliz
 VITE_API_URL=http://localhost:3003/api
 ```
 
-**⚠️ Importante**: 
+**⚠️ Importante**:
+
 - Use o prefixo `VITE_` para variáveis de ambiente acessíveis no cliente
 - O arquivo `.env.example` já está configurado com as variáveis necessárias
 
@@ -187,6 +194,7 @@ VITE_API_URL=http://localhost:3003/api
 
 - **ApiService** - Cliente HTTP genérico com fetch nativo e error handling
 - **AssistidasService** - Serviço de gestão de assistidas
+- **DoadoresService** - Serviço completo para gestão de doadores
 - **DoacoesService** - Serviço completo para gestão de doações
 - **MedicamentoService** - Integração com API de medicamentos
 
@@ -282,27 +290,39 @@ npm start
 
 - **Dashboard** - Visão geral com estatísticas
 - **Usuários** - Gestão de usuários do sistema
-- **🆕 Assistidas** - **Gestão completa de beneficiárias** com formulário multi-etapas
+- **Assistidas** - **Gestão completa de beneficiárias** com formulário multi-etapas
 - **Consultas** - Agendamento médico
 - **Medicamentos** - Controle de estoque (integrado com API)
+- **Doadores** - **Gestão completa de doadores** com validação CPF/CNPJ
 - **Doações** - Registro de contribuições (integrado com API MySQL)
 - **Despesas** - Controle financeiro
 
 ### Status de Integração
 
-| Módulo            | Status           | Funcionalidades             | Banco de Dados               |
-| ----------------- | ---------------- | --------------------------- | ---------------------------- |
-| Dashboard         | 🟡 Parcial       | Estatísticas básicas        | localStorage                 |
-| Usuários          | 🔴 Local         | CRUD básico                 | localStorage                 |
-| **🆕 Assistidas** | **🟢 Completo**  | **CRUD + Filtros + Perfil** | **localStorage + API Ready** |
-| Consultas         | 🔴 Local         | CRUD básico                 | localStorage                 |
-| **Medicamentos**  | **🟢 Integrado** | **CRUD completo**           | **MySQL API**                |
-| **Doações**       | **🟢 Integrado** | **CRUD completo**           | **MySQL API**                |
-| Despesas          | 🔴 Local         | CRUD básico                 | localStorage                 |
+| Módulo           | Status                | Funcionalidades                   | Integração Backend    |
+| ---------------- | --------------------- | --------------------------------- | --------------------- |
+| Dashboard        | 🔄 Em desenvolvimento | Estatísticas básicas              | 🔄 Em desenvolvimento |
+| Usuários         | 🟡 Frontend           | CRUD básico + UI completa         | 🔄 Em desenvolvimento |
+| **Assistidas**   | **🟢 Integrado**      | **CRUD + Filtros + Perfil + UI**  | **✅ MySQL API**      |
+| Consultas        | 🟡 Frontend           | CRUD básico + UI                  | 🔄 Em desenvolvimento |
+| **Medicamentos** | **🟢 Integrado**      | **CRUD completo + API**           | **✅ MySQL API**      |
+| **Doadores**     | **🟢 Integrado**      | **CRUD + Validação + Sort + API** | **✅ MySQL API**      |
+| **Doações**      | **🟢 Integrado**      | **CRUD + Seletor Doador + API**   | **✅ MySQL API**      |
+| Despesas         | 🟡 Frontend           | CRUD básico + UI                  | 🔄 Em desenvolvimento |
 
-### 🆕 Módulo Assistidas - Funcionalidades
+### Legenda do Status
 
-O módulo de Gestão de Assistidas agora está **completamente implementado** com:
+- **🟢 Integrado**: Frontend e backend totalmente funcionais
+- **🔄 Em desenvolvimento**: Módulo sendo trabalhado
+- **✅ MySQL API**: Conectado ao banco de dados MySQL
+- **🔄 Frontend pronto**: Interface pronta para integração
+- **🟡 Frontend**: Parcialmente implantado
+
+### Módulos Implementados
+
+#### Módulo Assistidas - Funcionalidades
+
+O módulo de Gestão de Assistidas está **completamente implementado** com:
 
 - ✅ **CRUD Completo**: Criar, visualizar, editar e excluir assistidas
 - ✅ **Formulário Multi-etapas**: 4 etapas de cadastro com validação
@@ -312,9 +332,22 @@ O módulo de Gestão de Assistidas agora está **completamente implementado** co
 - ✅ **Design Responsivo**: Otimizado para mobile, tablet e desktop
 - ✅ **Pronto para API**: Service preparado para integração com backend
 
+#### 🆕 Módulo Doadores - Funcionalidades
+
+O módulo de Gestão de Doadores está **completamente integrado** com:
+
+- ✅ **CRUD Completo**: Criar, visualizar, editar e excluir doadores
+- ✅ **Validação CPF/CNPJ**: Algoritmos completos com dígitos verificadores
+- ✅ **Formulário Inteligente**: Máscaras automáticas por tipo de doador
+- ✅ **Sistema de Ordenação**: Por nome, tipo, documento, telefone e endereço
+- ✅ **Integração com Doações**: Seletor de doadores no cadastro de doações
+- ✅ **Regras de Negócio**: Doadores com doações não podem ser excluídos
+- ✅ **Cards de Estatísticas**: Total, ativos, PF e PJ
+- ✅ **API Integrada**: Totalmente conectado ao backend MySQL
+
 ### Pré-requisitos para Integração
 
-Para usar os módulos integrados (Medicamentos, Doações e Assistidas), você precisa:
+Para usar os módulos integrados (Medicamentos, Doadores, Doações e Assistidas), você precisa:
 
 1. **MySQL** instalado e rodando
 2. **Backend Node.js** configurado e rodando
@@ -325,9 +358,10 @@ Para usar os módulos integrados (Medicamentos, Doações e Assistidas), você p
 ```
 Backend: http://localhost:3003/api
 ├── /medicamentos    # CRUD completo de medicamentos ✅
-├── /doacoes        # CRUD completo de doações ✅
-├── /assistidas     # CRUD completo de assistidas ✅
-└── /health         # Status da API
+├── /doadores        # CRUD completo de doadores ✅
+├── /doacoes         # CRUD completo de doações ✅
+├── /assistidas      # CRUD completo de assistidas ✅
+└── /health          # Status da API
 ```
 
 ## 🧹 Limpeza de Código
