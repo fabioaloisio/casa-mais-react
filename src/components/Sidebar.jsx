@@ -62,6 +62,10 @@ function Sidebar() {
             <FaIdCard />
             Gestão de Assistidas
           </Nav.Link>
+          <Nav.Link as={Link} onClick={closeSidebar} to="/doadores" className={location.pathname.includes('/doadores') ? 'active' : ''}>
+            <FaUserTie />
+            Gestão de Doadores
+          </Nav.Link>
         </div>
 
         <div className="menu-section">
@@ -78,10 +82,6 @@ function Sidebar() {
 
         <div className="menu-section">
           <div className="menu-section-title">Controle Financeiro</div>
-          <Nav.Link as={Link} onClick={closeSidebar} to="/doadores" className={location.pathname.includes('/doadores') ? 'active' : ''}>
-            <FaUserTie />
-            Gestão de Doadores
-          </Nav.Link>
           <Nav.Link as={Link} onClick={closeSidebar} to="/doacoes" className={location.pathname.includes('/doacoes') ? 'active' : ''}>
             <FaDonate />
             Gestão de Doações
