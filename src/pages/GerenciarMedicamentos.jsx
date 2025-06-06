@@ -7,6 +7,7 @@ import ModalExclusaoMedicamento from '../components/medicamentos/ModalExclusaoMe
 import { MedicamentoService } from '../services/MedicamentoService';
 import Toast from '../components/common/Toast';
 import './GerenciarMedicamentos.css';
+import './Doacoes.css';
 
 const GerenciarMedicamentos = () => {
   const [tipoFiltro, setTipoFiltro] = useState('todos');
@@ -122,8 +123,10 @@ const GerenciarMedicamentos = () => {
 
   if (loading) {
     return (
-      <div className="page-container">
-        <h2 className="titulo">Gerenciar Medicamentos</h2>
+      <div className="conteudo">
+        <div className="topo">
+          <h1>Gerenciar Medicamentos</h1>
+        </div>
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <p>Carregando medicamentos...</p>
         </div>
@@ -133,8 +136,10 @@ const GerenciarMedicamentos = () => {
 
   if (error) {
     return (
-      <div className="page-container">
-        <h2 className="titulo">Gerenciar Medicamentos</h2>
+      <div className="conteudo">
+        <div className="topo">
+          <h1>Gerenciar Medicamentos</h1>
+        </div>
         <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
           <p>{error}</p>
           <button onClick={carregarMedicamentos} style={{ marginTop: '10px' }}>
@@ -146,8 +151,11 @@ const GerenciarMedicamentos = () => {
   }
 
   return (
-    <div className="page-container">
-      <h2 className="titulo">Gerenciar Medicamentos</h2>
+    <div className="conteudo">
+      <div className="topo">
+        <h1>Gerenciar Medicamentos</h1>
+        <p>Gerencie o estoque de medicamentos da organização</p>
+      </div>
 
       <div className="top-bar">
         <button

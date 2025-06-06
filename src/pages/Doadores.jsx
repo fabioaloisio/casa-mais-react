@@ -1,125 +1,132 @@
 import { useState, useEffect } from 'react';
 import { Button, Table, Form, Card, Row, Col } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaPlus, FaSearch, FaDollarSign, FaUsers, FaBuilding, FaChartLine, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
-import doacoesService from '../services/doacoesService';
-import { formatCPF, formatCNPJ, formatCurrency } from '../utils/masks';
-import DoacaoModal from '../components/doacoes/DoacaoModal';
+import { FaEdit, FaTrash, FaPlus, FaSearch, FaDollarSign, FaUsers, FaBuilding, FaChartLine, FaUserTie, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import doadoresService from '../services/doadoresService';
+import { formatCPF, formatCNPJ } from '../utils/masks';
+import DoadorFormModal from '../components/doacoes/DoadorFormModal';
 import ConfirmDeleteModal from '../components/doacoes/ConfirmDeleteModal';
 import Toast from '../components/common/Toast';
 import './Doacoes.css';
 
-const Doacoes = () => {
-  const [doacoes, setDoacoes] = useState([]);
+const Doadores = () => {
+  const [doadores, setDoadores] = useState([]);
   const [filtro, setFiltro] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [doacaoEdit, setDoacaoEdit] = useState(null);
+  const [doadorEdit, setDoadorEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [doacaoToDelete, setDoacaoToDelete] = useState(null);
+  const [doadorToDelete, setDoadorToDelete] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [ordenacao, setOrdenacao] = useState({ campo: 'dataDoacao', direcao: 'desc' });
+  const [ordenacao, setOrdenacao] = useState({ campo: 'nome', direcao: 'asc' });
   
   const [stats, setStats] = useState({
-    totalDoacoes: 0,
-    valorTotal: 0,
+    totalDoadores: 0,
+    totalAtivos: 0,
     totalPessoaFisica: 0,
     totalPessoaJuridica: 0
   });
 
-  // Carregar doações ao montar o componente
+  // Carregar doadores ao montar o componente
   useEffect(() => {
-    loadDoacoes();
+    loadDoadores();
   }, []);
 
-  const loadDoacoes = async () => {
+  const loadDoadores = async () => {
     try {
       setLoading(true);
-      const allDoacoes = await doacoesService.getAll();
-      const statsData = await doacoesService.getStats();
-      setDoacoes(allDoacoes);
+      const allDoadores = await doadoresService.getAll();
+      setDoadores(allDoadores);
+      
+      // Calcular estatísticas
+      const statsData = {
+        totalDoadores: allDoadores.length,
+        totalAtivos: allDoadores.filter(d => d.ativo).length,
+        totalPessoaFisica: allDoadores.filter(d => d.tipo_doador === 'PF').length,
+        totalPessoaJuridica: allDoadores.filter(d => d.tipo_doador === 'PJ').length
+      };
       setStats(statsData);
     } catch (error) {
       setToast({
         show: true,
-        message: 'Erro ao carregar doações. Verifique sua conexão.',
+        message: 'Erro ao carregar lista de doadores',
         type: 'danger'
       });
-      console.error('Erro ao carregar doações:', error);
+      console.error('Erro ao carregar doadores:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleShowModal = (doacao = null) => {
-    setDoacaoEdit(doacao);
+  const handleShowModal = (doador = null) => {
+    setDoadorEdit(doador);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setDoacaoEdit(null);
+    setDoadorEdit(null);
   };
 
-  const handleSaveDoacao = async (doacaoData) => {
+  const handleSaveDoador = async (doadorData) => {
     try {
-      if (doacaoEdit) {
-        await doacoesService.update(doacaoEdit.id, doacaoData);
+      if (doadorEdit) {
+        await doadoresService.update(doadorEdit.id, doadorData);
         setToast({
           show: true,
-          message: 'Doação atualizada com sucesso!',
+          message: 'Doador atualizado com sucesso',
           type: 'success'
         });
       } else {
-        await doacoesService.create(doacaoData);
+        await doadoresService.create(doadorData);
         setToast({
           show: true,
-          message: 'Nova doação cadastrada com sucesso!',
+          message: 'Doador cadastrado com sucesso',
           type: 'success'
         });
       }
-      await loadDoacoes();
+      await loadDoadores();
       handleCloseModal();
     } catch (error) {
       setToast({
         show: true,
-        message: error.message || 'Erro ao salvar doação. Tente novamente.',
+        message: error.message || 'Erro ao salvar doador',
         type: 'danger'
       });
-      console.error('Erro ao salvar doação:', error);
+      console.error('Erro ao salvar doador:', error);
       // Não fechar o modal em caso de erro para permitir correção
     }
   };
 
-  const handleShowDeleteModal = (doacao) => {
-    setDoacaoToDelete(doacao);
+  const handleShowDeleteModal = (doador) => {
+    setDoadorToDelete(doador);
     setShowDeleteModal(true);
   };
 
   const handleCloseDeleteModal = () => {
     setShowDeleteModal(false);
-    setDoacaoToDelete(null);
+    setDoadorToDelete(null);
   };
 
   const handleConfirmDelete = async () => {
-    if (doacaoToDelete) {
+    if (doadorToDelete) {
       try {
         setDeleting(true);
-        await doacoesService.delete(doacaoToDelete.id);
+        await doadoresService.delete(doadorToDelete.id);
         setToast({
           show: true,
-          message: 'Doação excluída com sucesso!',
+          message: 'Doador excluído com sucesso',
           type: 'success'
         });
-        await loadDoacoes();
+        await loadDoadores();
         handleCloseDeleteModal();
       } catch (error) {
         setToast({
           show: true,
-          message: error.message || 'Erro ao excluir doação. Tente novamente.',
+          message: error.message || 'Erro ao excluir doador',
           type: 'danger'
         });
-        console.error('Erro ao excluir doação:', error);
+        console.error('Erro ao excluir doador:', error);
         handleCloseDeleteModal();
       } finally {
         setDeleting(false);
@@ -130,6 +137,16 @@ const Doacoes = () => {
   const formatDocumento = (documento, tipo) => {
     if (!documento) return '';
     return tipo === 'PF' ? formatCPF(documento) : formatCNPJ(documento);
+  };
+
+  const formatTelefone = (telefone) => {
+    if (!telefone) return '';
+    if (telefone.length === 11) {
+      return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (telefone.length === 10) {
+      return telefone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+    return telefone;
   };
 
   const handleOrdenar = (campo) => {
@@ -148,13 +165,13 @@ const Doacoes = () => {
       <FaSortDown className="text-warning ms-1" />;
   };
 
-  const doacoesFiltradas = doacoes
-    .filter(doacao => {
+  const doadoresFiltrados = doadores
+    .filter(doador => {
       const searchTerm = filtro.toLowerCase();
       return (
-        (doacao.doador?.nome || '').toLowerCase().includes(searchTerm) ||
-        (doacao.doador?.documento || '').includes(searchTerm) ||
-        (doacao.doador?.email || '').toLowerCase().includes(searchTerm)
+        doador.nome.toLowerCase().includes(searchTerm) ||
+        doador.documento.includes(searchTerm) ||
+        (doador.email && doador.email.toLowerCase().includes(searchTerm))
       );
     })
     .sort((a, b) => {
@@ -162,25 +179,33 @@ const Doacoes = () => {
       let valorA, valorB;
 
       switch (campo) {
-        case 'dataDoacao':
-          valorA = new Date(a.dataDoacao);
-          valorB = new Date(b.dataDoacao);
-          break;
-        case 'doador':
-          valorA = (a.doador?.nome || '').toLowerCase();
-          valorB = (b.doador?.nome || '').toLowerCase();
+        case 'nome':
+          valorA = a.nome.toLowerCase();
+          valorB = b.nome.toLowerCase();
           break;
         case 'tipo':
-          valorA = a.doador?.tipo_doador || '';
-          valorB = b.doador?.tipo_doador || '';
+          valorA = a.tipo_doador;
+          valorB = b.tipo_doador;
           break;
         case 'documento':
-          valorA = a.doador?.documento || '';
-          valorB = b.doador?.documento || '';
+          valorA = a.documento;
+          valorB = b.documento;
           break;
-        case 'valor':
-          valorA = parseFloat(a.valor) || 0;
-          valorB = parseFloat(b.valor) || 0;
+        case 'telefone':
+          valorA = a.telefone || '';
+          valorB = b.telefone || '';
+          break;
+        case 'email':
+          valorA = a.email || '';
+          valorB = b.email || '';
+          break;
+        case 'endereco':
+          valorA = a.endereco || '';
+          valorB = b.endereco || '';
+          break;
+        case 'data_cadastro':
+          valorA = new Date(a.data_cadastro || 0);
+          valorB = new Date(b.data_cadastro || 0);
           break;
         default:
           return 0;
@@ -198,10 +223,10 @@ const Doacoes = () => {
   return (
     <div className="conteudo">
       <div className="topo">
-        <h1>Gestão de Doações</h1>
+        <h1>Gestão de Doadores</h1>
         <p>
-          Gerencie as doações recebidas pela instituição. Aqui você pode cadastrar novos doadores,
-          registrar doações monetárias e acompanhar o histórico de contribuições.
+          Gerencie os doadores cadastrados na instituição. Aqui você pode cadastrar novos doadores,
+          editar informações e acompanhar o histórico de cada contribuinte.
         </p>
       </div>
 
@@ -211,8 +236,8 @@ const Doacoes = () => {
           <Card className="stats-card">
             <Card.Body className="d-flex align-items-center justify-content-between">
               <div>
-                <h6 className="text-muted mb-1">Total de Doações</h6>
-                <h3 className="mb-0">{stats.totalDoacoes}</h3>
+                <h6 className="text-muted mb-1">Total de Doadores</h6>
+                <h3 className="mb-0">{stats.totalDoadores}</h3>
               </div>
               <FaChartLine size={30} className="text-primary" />
             </Card.Body>
@@ -222,10 +247,10 @@ const Doacoes = () => {
           <Card className="stats-card">
             <Card.Body className="d-flex align-items-center justify-content-between">
               <div>
-                <h6 className="text-muted mb-1">Valor Total</h6>
-                <h3 className="mb-0">{formatCurrency(stats.valorTotal)}</h3>
+                <h6 className="text-muted mb-1">Doadores Ativos</h6>
+                <h3 className="mb-0">{stats.totalAtivos}</h3>
               </div>
-              <FaDollarSign size={30} className="text-success" />
+              <FaUserTie size={30} className="text-success" />
             </Card.Body>
           </Card>
         </Col>
@@ -259,7 +284,7 @@ const Doacoes = () => {
           className="azul d-flex align-items-center gap-2"
           onClick={() => handleShowModal()}
         >
-          <FaPlus /> Nova Doação
+          <FaPlus /> Novo Doador
         </Button>
 
         <div className="d-flex align-items-center gap-2">
@@ -274,17 +299,17 @@ const Doacoes = () => {
         </div>
       </div>
 
-      {/* Tabela de doações */}
+      {/* Tabela de doadores */}
       <div className="tabela-container">
         <Table className="tabela-assistidas" hover responsive>
           <thead>
             <tr>
               <th 
                 className="cursor-pointer user-select-none"
-                onClick={() => handleOrdenar('doador')}
-                title="Clique para ordenar por doador"
+                onClick={() => handleOrdenar('nome')}
+                title="Clique para ordenar por nome"
               >
-                Doador {getSortIcon('doador')}
+                Nome {getSortIcon('nome')}
               </th>
               <th 
                 className="cursor-pointer user-select-none"
@@ -300,20 +325,19 @@ const Doacoes = () => {
               >
                 Documento {getSortIcon('documento')}
               </th>
-              <th>Contato</th>
               <th 
                 className="cursor-pointer user-select-none"
-                onClick={() => handleOrdenar('valor')}
-                title="Clique para ordenar por valor"
+                onClick={() => handleOrdenar('telefone')}
+                title="Clique para ordenar por telefone"
               >
-                Valor {getSortIcon('valor')}
+                Contato {getSortIcon('telefone')}
               </th>
               <th 
                 className="cursor-pointer user-select-none"
-                onClick={() => handleOrdenar('dataDoacao')}
-                title="Clique para ordenar por data"
+                onClick={() => handleOrdenar('endereco')}
+                title="Clique para ordenar por endereço"
               >
-                Data {getSortIcon('dataDoacao')}
+                Endereço {getSortIcon('endereco')}
               </th>
               <th>Ações</th>
             </tr>
@@ -321,58 +345,66 @@ const Doacoes = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="6" className="text-center py-4">
                   <div className="d-flex justify-content-center align-items-center">
                     <div className="spinner-border text-primary me-2" role="status">
                       <span className="visually-hidden">Carregando...</span>
                     </div>
-                    Carregando doações...
+                    Carregando doadores...
                   </div>
                 </td>
               </tr>
-            ) : doacoesFiltradas.length === 0 ? (
+            ) : doadoresFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="6" className="text-center py-4">
                   <div className="text-muted">
-                    <p className="mb-0">Nenhuma doação encontrada</p>
-                    <small>Tente ajustar os filtros ou clique em "Nova Doação"</small>
+                    <p className="mb-0">Nenhum doador encontrado</p>
+                    <small>Tente ajustar os filtros ou clique em "Novo Doador"</small>
                   </div>
                 </td>
               </tr>
             ) : (
-              doacoesFiltradas.map(doacao => (
-                <tr key={doacao.id}>
-                  <td className="fw-medium">{doacao.doador?.nome || 'Doador não encontrado'}</td>
+              doadoresFiltrados.map(doador => (
+                <tr key={doador.id}>
+                  <td className="fw-medium">{doador.nome}</td>
                   <td>
-                    <span className={`status ${doacao.doador?.tipo_doador === 'PF' ? 'tratamento' : 'ativa'}`}>
-                      {doacao.doador?.tipo_doador === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
+                    <span className={`status ${doador.tipo_doador === 'PF' ? 'tratamento' : 'ativa'}`}>
+                      {doador.tipo_doador === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
                     </span>
                   </td>
-                  <td className="text-muted">{formatDocumento(doacao.doador?.documento, doacao.doador?.tipo_doador)}</td>
+                  <td className="text-muted">{formatDocumento(doador.documento, doador.tipo_doador)}</td>
                   <td>
-                    <div>{doacao.doador?.telefone}</div>
-                    {doacao.doador?.email && (
-                      <small className="text-muted">{doacao.doador.email}</small>
+                    <div>{formatTelefone(doador.telefone)}</div>
+                    {doador.email && (
+                      <small className="text-muted">{doador.email}</small>
                     )}
                   </td>
-                  <td className="text-end fw-bold text-success">
-                    {formatCurrency(doacao.valor)}
-                  </td>
                   <td>
-                    {new Date(doacao.dataDoacao).toLocaleDateString('pt-BR')}
+                    {doador.endereco ? (
+                      <div>
+                        <div>{doador.endereco}</div>
+                        {(doador.cidade || doador.estado) && (
+                          <small className="text-muted">
+                            {doador.cidade}{doador.cidade && doador.estado && '/'}{doador.estado}
+                          </small>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted">-</span>
+                    )}
                   </td>
                   <td>
                     <div className="d-flex gap-1">
                       <Button 
                         className="d-flex align-items-center gap-1 btn-outline-custom btn-sm fs-7"
-                        onClick={() => handleShowModal(doacao)}
+                        onClick={() => handleShowModal(doador)}
                       >
                         <FaEdit /> Editar
                       </Button>
                       <Button 
                         className="d-flex align-items-center gap-1 btn-sm fs-7"
                         variant="outline-danger"
-                        onClick={() => handleShowDeleteModal(doacao)}
+                        onClick={() => handleShowDeleteModal(doador)}
                       >
                         <FaTrash /> Excluir
                       </Button>
@@ -386,11 +418,12 @@ const Doacoes = () => {
       </div>
 
       {/* Modal de cadastro/edição */}
-      <DoacaoModal
+      <DoadorFormModal
         show={showModal}
         onHide={handleCloseModal}
-        onSave={handleSaveDoacao}
-        doacao={doacaoEdit}
+        onSave={handleSaveDoador}
+        doador={doadorEdit}
+        tipoDoador={doadorEdit?.tipo_doador || 'PF'}
       />
 
       {/* Modal de confirmação de exclusão */}
@@ -398,7 +431,9 @@ const Doacoes = () => {
         show={showDeleteModal}
         onHide={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
-        doacao={doacaoToDelete}
+        doacao={doadorToDelete}
+        title="Confirmar Exclusão"
+        message={`Tem certeza que deseja excluir o doador "${doadorToDelete?.nome}"? Esta ação não pode ser desfeita.`}
       />
 
       {/* Toast de notificação */}
@@ -412,4 +447,4 @@ const Doacoes = () => {
   );
 };
 
-export default Doacoes;
+export default Doadores;

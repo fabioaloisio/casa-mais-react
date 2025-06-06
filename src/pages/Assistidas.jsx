@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Container, Button, Form, Row, Col, Card } from 'react-bootstrap';
+import { Button, Form, Row, Col, Card } from 'react-bootstrap';
 import Formulario from '../components/assistidas/Formulario';
 import ListaAssistidas from '../components/assistidas/ListaAssistidas';
 import { assistidasService } from '../services/assistidasService';
 import Toast from '../components/common/Toast';
 import ConfirmDeleteModal from '../components/assistidas/ConfirmDeleteModal';
 import '../components/assistidas/Assistidas.css';
+import '../pages/Doacoes.css';
 import { FaPlus } from 'react-icons/fa';
 
 const Assistidas = () => {
@@ -145,31 +146,35 @@ const Assistidas = () => {
 
   if (loading) {
     return (
-      <Container fluid className="p-4">
-        <h1>Gestão de Assistidas</h1>
+      <div className="conteudo">
+        <div className="topo">
+          <h1>Gestão de Assistidas</h1>
+        </div>
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <p>Carregando assistidas...</p>
         </div>
-      </Container>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Container fluid className="p-4">
-        <h1>Gestão de Assistidas</h1>
+      <div className="conteudo">
+        <div className="topo">
+          <h1>Gestão de Assistidas</h1>
+        </div>
         <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
           <p>{error}</p>
           <Button onClick={carregarAssistidas} style={{ marginTop: '10px' }}>
             Tentar Novamente
           </Button>
         </div>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container fluid className="p-4">
+    <div className="conteudo">
       <div className="topo">
         <h1>Gestão de Assistidas</h1>
         <p>Gerencie os dados completos das assistidas, incluindo dados pessoais, endereço e contatos emergenciais.</p>
@@ -362,7 +367,7 @@ const Assistidas = () => {
         type={toast.type}
         onClose={() => setToast({ ...toast, show: false })}
       />
-    </Container>
+    </div>
   );
 };
 
