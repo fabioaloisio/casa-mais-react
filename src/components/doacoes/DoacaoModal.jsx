@@ -158,7 +158,7 @@ const DoacaoModal = ({ show, onHide, onSave, doacao }) => {
         show={show}
         onHide={handleClose}
         onSubmit={handleSubmit}
-        title={doacao ? 'Editar Doação' : 'Nova Doação'}
+        title={doacao ? 'Editar Doação' : 'Cadastrar Doação'}
         size="lg"
         loading={isSubmitting}
         submitLabel={doacao ? 'Atualizar' : 'Cadastrar'}

@@ -81,7 +81,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
     // Só passa os dados reais para comparação após carregamento completo
     const { confirmClose } = useUnsavedChanges(
         hasLoadedInitialData ? initialData : formData, 
-        formData
+        hasLoadedInitialData ? normalizeFormData(formData) : formData
     );
 
     const handleClose = () => {
@@ -169,7 +169,9 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                 }
                 
                 setFormData(dadosFormatados);
-                setInitialData(dadosFormatados);
+                // Normalizar dados iniciais para comparação
+                const dadosNormalizados = normalizeFormData(dadosFormatados);
+                setInitialData(dadosNormalizados);
                 // Usar setTimeout para garantir que setState seja processado
                 setTimeout(() => setHasLoadedInitialData(true), 100);
             } else {
@@ -179,7 +181,8 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                     nacionalidade: "Brasileira",
                 };
                 setFormData(inicial);
-                setInitialData(inicial);
+                const inicialNormalizado = normalizeFormData(inicial);
+                setInitialData(inicialNormalizado);
                 setTimeout(() => setHasLoadedInitialData(true), 100);
             }
         } else {
