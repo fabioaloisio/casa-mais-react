@@ -5,6 +5,7 @@ import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
 import UsuarioModal from '../components/usuarios/UsuarioModal'
 import ConfirmModal from '../components/common/ConfirmModal'
 import './Usuarios.css'
+import './Doacoes.css'
 
 function Usuarios() {
   const [showModal, setShowModal] = useState(false)

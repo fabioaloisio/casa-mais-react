@@ -1,27 +1,2 @@
-.dashboard h1 {
-  color: var(--text-heading);
-  margin-bottom: 2rem;
-}
-
-.dashboard-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px var(--shadow-md);
-}
-
-.dashboard-card h3 {
-  font-size: 1.25rem;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-}
-
-.dashboard-number {
-  font-size: 3rem;
-  font-weight: bold;
-  color: var(--primary-blue);
-  margin: 0;
-}
+/* Dashboard agora usa os estilos padrão do Doacoes.css */
+/* Os cards usam a classe .stats-card definida em Doacoes.css */
