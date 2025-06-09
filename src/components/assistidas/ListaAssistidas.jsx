@@ -1,5 +1,5 @@
 import { Button, Table } from "react-bootstrap";
-import { FaEdit, FaTrash, FaUser } from "react-icons/fa";
+import { FaBold, FaEdit, FaTrash, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { formatCPF } from "../../utils/masks";
 import PropTypes from 'prop-types';
@@ -10,11 +10,10 @@ const ListaAssistidas = ({ assistidas, onDelete, onEdit }) => {
             <Table className='tabela-assistidas'>
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Nome</th>
                         <th>CPF</th>
                         <th>Idade</th>
-                        <th>Status</th>
+                        <th >Status</th>
                         <th className="text-center">Ações</th>
                     </tr>
                 </thead>
@@ -27,11 +26,10 @@ const ListaAssistidas = ({ assistidas, onDelete, onEdit }) => {
                         ) : (
                             assistidas.map((assistida) => (
                                 <tr key={assistida.id}>
-                                    <td>{assistida.id}</td>
-                                    <td>{assistida.nome}</td>
+                                    <td className="fw-medium">{assistida.nome}</td>
                                     <td>{formatCPF(assistida.cpf)}</td>
-                                    <td>{assistida.idade}</td>
-                                    <td>
+                                    <td >{assistida.idade}</td>
+                                    <td >
                                         <span className={`status ${assistida.status?.toLowerCase()?.replace(' ', '')}`}>
                                             {assistida.status}
                                         </span>
