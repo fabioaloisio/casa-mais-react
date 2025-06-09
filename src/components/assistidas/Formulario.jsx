@@ -163,7 +163,7 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                 errors.cpf = "Este CPF já está cadastrado.";
             }
 
-            // Verificação da idade mínima (4 anos)
+            // Verificação da idade mínima (18 anos)
             if (formData.data_nascimento) {
                 const nascimento = new Date(formData.data_nascimento);
                 const hoje = new Date();
@@ -172,8 +172,8 @@ const Formulario = ({ showModal, setShowModal, onSubmit, assistidaParaEditar, mo
                 if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
                     idade--;
                 }
-                if (idade < 4) {
-                    errors.data_nascimento = "A assistida deve ter no mínimo 4 anos.";
+                if (idade < 18) {
+                    errors.data_nascimento = "A assistida deve ter no mínimo 18 anos.";
                 }
             }
         }
