@@ -8,6 +8,7 @@ import { MedicamentoService } from '../services/MedicamentoService';
 import Toast from '../components/common/Toast';
 import './GerenciarMedicamentos.css';
 import './Doacoes.css';
+import { FaPlus } from 'react-icons/fa';
 
 const GerenciarMedicamentos = () => {
   const [tipoFiltro, setTipoFiltro] = useState('todos');
@@ -162,7 +163,7 @@ const GerenciarMedicamentos = () => {
           className="btn-cadastrar"
           onClick={() => setIsModalCadastroOpen(true)}
         >
-          Cadastrar Medicamento
+          <FaPlus />  Cadastrar Medicamento
         </button>
 
         <div className="filtros">
