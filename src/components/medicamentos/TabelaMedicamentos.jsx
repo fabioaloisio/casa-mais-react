@@ -16,10 +16,10 @@ const TabelaMedicamentos = ({ medicamentos, onEditar, onExcluir }) => {
       <table className="tabela">
         <thead>
           <tr>
+            <th>Id</th>
             <th>Nome</th>
-            <th>Tipo</th>
+            <th>Forma Farmacêutica</th>
             <th>Quantidade</th>
-            <th>Validade</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -27,10 +27,10 @@ const TabelaMedicamentos = ({ medicamentos, onEditar, onExcluir }) => {
           {medicamentos.length > 0 ? (
             medicamentos.map((med) => (
               <tr key={med.id}>
+                <td>{med.id}</td>
                 <td>{med.nome}</td>
                 <td>{med.tipo}</td>
-                <td>{med.quantidade}</td>
-                <td>{formatarData(med.validade)}</td>
+                <td>{med.quantidade} un</td>
                 <td>
                   <div>
                     <button
