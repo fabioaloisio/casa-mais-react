@@ -2,96 +2,48 @@ import { useState, useEffect } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
 import FormModal from '../common/FormModal';
 import useUnsavedChanges from '../common/useUnsavedChanges';
+import { UnidadeMedidaService } from '../../services/unidadesMedidaService.js';
 
 const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     nome: '',
     tipo: '',
     quantidade: '',
-    validade: ''
+    unidadeMedida: ''
   });
+
   const [errors, setErrors] = useState({});
   const [initialData, setInitialData] = useState({});
+  const [unidadesMedida, setUnidadesMedida] = useState([]);
+
+  useEffect(() => {
+    const carregarUnidadesMedida = async () => {
+      try {
+        const dados = await UnidadeMedidaService.obterTodas();
+        setUnidadesMedida(dados);
+      } catch (error) {
+        console.error('Erro ao carregar unidades de medida:', error);
+      }
+    };
+
+    carregarUnidadesMedida();
+  }, []);
 
   useEffect(() => {
     if (medicamento) {
-      // Converter validade para formato de input date (YYYY-MM-DD)
-      let validadeFormatada = '';
-      if (medicamento.validade) {
-        // Se vier do backend como ISO string
-        if (medicamento.validade.includes('T')) {
-          validadeFormatada = medicamento.validade.split('T')[0];
-        } 
-        // Se vier no formato DD/MM/YYYY
-        else if (medicamento.validade.includes('/')) {
-          const [dia, mes, ano] = medicamento.validade.split('/');
-          if (dia && mes && ano) {
-            validadeFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
-          }
-        }
-      }
-      
-      const dadosIniciais = {
-        ...medicamento,
-        validade: validadeFormatada
-      };
-      setFormData(dadosIniciais);
-      setInitialData(dadosIniciais);
+      setFormData(medicamento);
+      setInitialData(medicamento);
       setErrors({});
     }
   }, [medicamento]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.nome.trim()) {
-      newErrors.nome = 'O nome do medicamento é obrigatório';
-    }
-    
-    if (!formData.tipo.trim()) {
-      newErrors.tipo = 'O tipo é obrigatório';
-    }
-    
-    if (!formData.quantidade || Number(formData.quantidade) < 0) {
-      newErrors.quantidade = 'A quantidade deve ser maior ou igual a zero';
-    }
-    
-    if (!formData.validade) {
-      newErrors.validade = 'A validade é obrigatória';
-    }
-    
-    return newErrors;
-  };
-
-  const handleSubmit = async (e) => {
-    const validationErrors = validateForm();
-    
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    // Converter validade de volta para MM/YYYY
-    const validadeFormatada = formData.validade
-      ? formData.validade.split('-').reverse().join('/')
-      : '';
-
-    const medicamentoAtualizado = {
-      ...formData,
-      quantidade: Number(formData.quantidade),
-      validade: validadeFormatada
-    };
-
-    await onSave(medicamentoAtualizado);
   };
 
   const { hasUnsavedChanges, confirmClose } = useUnsavedChanges(initialData, formData);
@@ -100,13 +52,11 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
     confirmClose(onClose);
   };
 
-  if (!medicamento) return null;
-
   return (
     <FormModal
       show={true}
       onHide={handleClose}
-      onSubmit={handleSubmit}
+      onSubmit={() => onSave(formData)}
       title="Editar Medicamento"
       size="md"
       submitLabel="Salvar"
@@ -124,9 +74,7 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
               placeholder="Digite o nome do medicamento"
               isInvalid={!!errors.nome}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.nome}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.nome}</Form.Control.Feedback>
           </Form.Group>
         </Col>
       </Row>
@@ -143,9 +91,7 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
               placeholder="Ex: Comprimido, Xarope, etc."
               isInvalid={!!errors.tipo}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.tipo}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.tipo}</Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={6}>
@@ -160,9 +106,7 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
               min="0"
               isInvalid={!!errors.quantidade}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.quantidade}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.quantidade}</Form.Control.Feedback>
           </Form.Group>
         </Col>
       </Row>
@@ -170,18 +114,23 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
       <Row className="mb-3">
         <Col md={12}>
           <Form.Group>
-            <Form.Label>Validade *</Form.Label>
+            <Form.Label>Unidade de Medida *</Form.Label>
             <Form.Control
-              type="date"
-              name="validade"
-              value={formData.validade}
-              onChange={handleInputChange}
-              min={new Date().toISOString().slice(0, 10)}
-              isInvalid={!!errors.validade}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.validade}
-            </Form.Control.Feedback>
+              as="select"
+              name="unidade_medida_id"
+              value={formData.unidade_medida_id || ''}
+              onChange={(e) => setFormData({ ...formData, unidade_medida_id: e.target.value })}
+              isInvalid={!!errors.unidade_medida_id}
+            >
+              <option value="">Selecione...</option>
+              {unidadesMedida.map((unidade) => (
+                <option key={unidade.id} value={unidade.id}>
+                  {unidade.nome} ({unidade.sigla})
+                </option>
+              ))}
+            </Form.Control>
+
+            <Form.Control.Feedback type="invalid">{errors.unidadeMedida}</Form.Control.Feedback>
           </Form.Group>
         </Col>
       </Row>

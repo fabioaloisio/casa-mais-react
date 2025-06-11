@@ -43,7 +43,7 @@
     flex-wrap: wrap;
 }
 
-.select-filtro,
+.select-unidade-medida,
 .input-filtro {
     background-color: #ffffff;
     color: #0f172a;
@@ -59,7 +59,7 @@
     width: 220px;
 }
 
-.select-filtro:focus,
+.select-unidade-medida:focus,
 .input-filtro:focus {
     outline: none;
     border-color: #3b82f6;
@@ -180,7 +180,7 @@
         justify-content: center;
     }
 
-    .select-filtro,
+    .select-unidade-medida,
     .input-filtro {
         min-width: 150px;
     }
@@ -218,7 +218,7 @@
         gap: 0.75rem;
     }
 
-    .select-filtro,
+    .select-unidade-medida,
     .input-filtro {
         width: 100%;
         min-width: unset;

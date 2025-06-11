@@ -17,7 +17,6 @@ const DetalhesAssistida = () => {
         carregarAssistida();
     }, [id]);
 
-
     const carregarAssistida = async () => {
         try {
             setLoading(true);
@@ -121,7 +120,7 @@ const DetalhesAssistida = () => {
                                 <Col md={6}>
                                     <p><strong>Nome:</strong> {assistida.nome || '-'}</p>
                                     <p><strong>CPF:</strong> {formatCPF(assistida.cpf) || '-'}</p>
-                                    <p><strong>RG:</strong> {formatRG(assistida.rg) || '-'}</p>
+                                    <p><strong>RG:</strong> {assistida.rg || '-'}</p>
                                     <p><strong>Data de Nascimento:</strong> {formatarData(assistida.data_nascimento)}</p>
                                     <p><strong>Idade:</strong> {calcularIdade(assistida.data_nascimento)} anos</p>
                                 </Col>
@@ -169,163 +168,170 @@ const DetalhesAssistida = () => {
                 </Col>
             </Row>
 
-            <Row className="mb-4">
-                <Col md={6}>
-                    <Card>
-                        <Card.Header><FaCalendarAlt className="me-2" /> Informações de Atendimento</Card.Header>
-                        <Card.Body>
-                            <Row>
-                                <Col>
-                                    <p><strong>Data do Último Atendimento:</strong> {formatarData(assistida.data_atendimento)}</p>
-                                    <p><strong>Hora:</strong> {assistida.hora || '-'}</p>
-                                    {assistida.tempo_sem_uso && (
-                                        <p><strong>Tempo sem Uso:</strong> {assistida.tempo_sem_uso}</p>
+            {assistida.data_atendimento && (
+                <Row className="mb-4">
+                    <Col md={6}>
+                        <Card>
+                            <Card.Header><FaCalendarAlt className="me-2" /> Informações de Atendimento</Card.Header>
+                            <Card.Body>
+                                <Row>
+                                    <Col>
+                                        <p><strong>Data do Último Atendimento:</strong> {formatarData(assistida.data_atendimento)}</p>
+                                        <p><strong>Hora:</strong> {assistida.hora || '-'}</p>
+                                        {assistida.tempo_sem_uso && (
+                                            <p><strong>Tempo sem Uso:</strong> {assistida.tempo_sem_uso}</p>
+                                        )}
+
+                                        {assistida.motivacao_internacoes && (
+                                            <p><strong>Motivação das Internações:</strong> {assistida.motivacao_internacoes}</p>
+                                        )}
+
+                                    </Col>
+
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    {/* Internações */}
+                    <Col>
+                        <Card>
+                            <Card.Header><BsHospital className="me-2" /> Internações</Card.Header>
+                            <Card.Body>
+                                {assistida.internacoes && assistida.internacoes.length > 0 ? (
+                                    <Table striped bordered size="sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Local</th>
+                                                <th>Duração</th>
+                                                <th>Data</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {assistida.internacoes.map((i, idx) => (
+                                                <tr key={idx}>
+                                                    <td>{i.local}</td>
+                                                    <td>{i.duracao}</td>
+                                                    <td>{formatarData(i.data)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                ) : (
+                                    <p className="text-muted mb-0">Sem internações registradas.</p>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+                </Row>
+            )}
+
+            {assistida.drogas && assistida.drogas.length > 0 && (
+                <Row className='mb-4'>
+                    <Col>
+                        <Card>
+                            <Card.Header>< BsDropletHalf className="me-2" /> Substâncias Utilizadas</Card.Header>
+                            <Card.Body>
+                                {assistida.drogas && assistida.drogas.length > 0 ? (
+                                    <Table striped bordered size="sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Substância</th>
+                                                <th>Idade de Início</th>
+                                                <th>Tempo de Uso</th>
+                                                <th>Intensidade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {assistida.drogas.map((d, idx) => (
+                                                <tr key={idx}>
+                                                    <td>{d.tipo}</td>
+                                                    <td>{d.idade_inicio}</td>
+                                                    <td>{d.tempo_uso}</td>
+                                                    <td>{d.intensidade}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                ) : (
+                                    <p className="text-muted mb-0">Sem uso de substâncias declarado.</p>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+                    <Col md={5}>
+                        <Card>
+                            <Card.Header><BsCapsule className="me-2" /> Medicamentos Utilizados</Card.Header>
+                            <Card.Body>
+                                {assistida.medicamentos && assistida.medicamentos.length > 0 ? (
+                                    <Table striped bordered size="sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Dosagem</th>
+                                                <th>Frequência</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {assistida.medicamentos.map((med, idx) => (
+                                                <tr key={idx}>
+                                                    <td>{med.nome}</td>
+                                                    <td>{med.dosagem || '-'}</td>
+                                                    <td>{med.frequencia || '-'}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                ) : (
+                                    <p className="text-muted mb-0">Sem medicamentos registrados.</p>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+
+                </Row>
+            )}
+
+            {assistida.historia_patologica && (
+                <Row className="mb-4">
+                    <Col>
+                        <Card>
+                            <Card.Header><FaFileAlt className="me-2" /> História Patológica e Observações</Card.Header>
+                            <Card.Body>
+                                <Row>
+                                    <Col md={12}>
+                                        <div className="mb-3">
+                                            <strong>História Patológica Regressa:</strong>
+                                            <p className="mt-2 p-3 bg-light rounded">{assistida.historia_patologica || 'Não informado'}</p>
+                                        </div>
+                                    </Col>
+                                    {assistida.fatos_marcantes && (
+                                        <Col md={4}>
+                                            <strong>Fatos Marcantes:</strong>
+                                            <p className="mt-2 p-3 bg-light rounded">{assistida.fatos_marcantes}</p>
+                                        </Col>
                                     )}
-
-                                    {assistida.motivacao_internacoes && (
-                                        <p><strong>Motivação das Internações:</strong> {assistida.motivacao_internacoes}</p>
+                                    {assistida.infancia && (
+                                        <Col md={4}>
+                                            <strong>Infância:</strong>
+                                            <p className="mt-2 p-3 bg-light rounded">{assistida.infancia}</p>
+                                        </Col>
                                     )}
+                                    {assistida.adolescencia && (
+                                        <Col md={4}>
+                                            <strong>Adolescência:</strong>
+                                            <p className="mt-2 p-3 bg-light rounded">{assistida.adolescencia}</p>
+                                        </Col>
+                                    )}
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            )}
 
-                                </Col>
-
-                            </Row>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                {/* Internações */}
-                <Col>
-                    <Card>
-                        <Card.Header><BsHospital className="me-2" /> Internações</Card.Header>
-                        <Card.Body>
-                            {assistida.internacoes && assistida.internacoes.length > 0 ? (
-                                <Table striped bordered size="sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Local</th>
-                                            <th>Duração</th>
-                                            <th>Data</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {assistida.internacoes.map((i, idx) => (
-                                            <tr key={idx}>
-                                                <td>{i.local}</td>
-                                                <td>{i.duracao}</td>
-                                                <td>{formatarData(i.data)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            ) : (
-                                <p className="text-muted mb-0">Sem internações registradas.</p>
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-
-            </Row>
-
-            {/* Drogas */}
-            <Row className='mb-4'>
-                <Col>
-                    <Card>
-                        <Card.Header>< BsDropletHalf className="me-2" /> Substâncias Utilizadas</Card.Header>
-                        <Card.Body>
-                            {assistida.drogas && assistida.drogas.length > 0 ? (
-                                <Table striped bordered size="sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Substância</th>
-                                            <th>Idade de Início</th>
-                                            <th>Tempo de Uso</th>
-                                            <th>Intensidade</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {assistida.drogas.map((d, idx) => (
-                                            <tr key={idx}>
-                                                <td>{d.tipo}</td>
-                                                <td>{d.idade_inicio}</td>
-                                                <td>{d.tempo_uso}</td>
-                                                <td>{d.intensidade}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            ) : (
-                                <p className="text-muted mb-0">Sem uso de substâncias declarado.</p>
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-
-                <Col md={5}>
-                    <Card>
-                        <Card.Header><BsCapsule className="me-2" /> Medicamentos Utilizados</Card.Header>
-                        <Card.Body>
-                            {assistida.medicamentos && assistida.medicamentos.length > 0 ? (
-                                <Table striped bordered size="sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Nome</th>
-                                            <th>Dosagem</th>
-                                            <th>Frequência</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {assistida.medicamentos.map((med, idx) => (
-                                            <tr key={idx}>
-                                                <td>{med.nome}</td>
-                                                <td>{med.dosagem || '-'}</td>
-                                                <td>{med.frequencia || '-'}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            ) : (
-                                <p className="text-muted mb-0">Sem medicamentos registrados.</p>
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-
-
-            </Row>
-            <Row className="mb-4">
-                <Col>
-                    <Card>
-                        <Card.Header><FaFileAlt className="me-2" /> História Patológica e Observações</Card.Header>
-                        <Card.Body>
-                            <Row>
-                                <Col md={12}>
-                                    <div className="mb-3">
-                                        <strong>História Patológica Regressa:</strong>
-                                        <p className="mt-2 p-3 bg-light rounded">{assistida.historia_patologica || 'Não informado'}</p>
-                                    </div>
-                                </Col>
-                                {assistida.fatos_marcantes && (
-                                    <Col md={4}>
-                                        <strong>Fatos Marcantes:</strong>
-                                        <p className="mt-2 p-3 bg-light rounded">{assistida.fatos_marcantes}</p>
-                                    </Col>
-                                )}
-                                {assistida.infancia && (
-                                    <Col md={4}>
-                                        <strong>Infância:</strong>
-                                        <p className="mt-2 p-3 bg-light rounded">{assistida.infancia}</p>
-                                    </Col>
-                                )}
-                                {assistida.adolescencia && (
-                                    <Col md={4}>
-                                        <strong>Adolescência:</strong>
-                                        <p className="mt-2 p-3 bg-light rounded">{assistida.adolescencia}</p>
-                                    </Col>
-                                )}
-                            </Row>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
         </Container>
     );
 };
