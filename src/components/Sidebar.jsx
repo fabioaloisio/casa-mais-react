@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Nav, Accordion } from 'react-bootstrap'
-import { FaDonate, FaHome, FaIdCard, FaMoneyBillWave, FaPills, FaStethoscope, FaUsers, FaBars, FaTimes, FaUserTie } from 'react-icons/fa'
+import { FaDonate, FaHome, FaIdCard, FaMoneyBillWave, FaPills, FaStethoscope, FaUsers, FaBars, FaTimes, FaUserTie, FaTags } from 'react-icons/fa'
 import './Sidebar.css'
 import Logo from './logo'
 
@@ -93,6 +93,10 @@ function Sidebar() {
             <Nav.Link as={Link} onClick={closeSidebar} to="/despesas" className={location.pathname.includes('/despesas') ? 'active' : ''}>
               <FaMoneyBillWave />
               Gestão de Despesas
+            </Nav.Link>
+            <Nav.Link as={Link} onClick={closeSidebar} to="/tipos-despesas" className={location.pathname.includes('/tipos-despesas') ? 'active' : ''}>
+              <FaTags />
+              Cadastro de Despesas
             </Nav.Link>
           </div>
         </Nav>
