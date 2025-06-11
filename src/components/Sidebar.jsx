@@ -96,7 +96,7 @@ function Sidebar() {
             </Nav.Link>
             <Nav.Link as={Link} onClick={closeSidebar} to="/tipos-despesas" className={location.pathname.includes('/tipos-despesas') ? 'active' : ''}>
               <FaTags />
-              Cadastro de Despesas
+              Gestão de Tipos de Despesas
             </Nav.Link>
           </div>
         </Nav>
