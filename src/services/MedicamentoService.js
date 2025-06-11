@@ -1,4 +1,4 @@
-//Aldruin Bonfim de Lima Souza - RA 10482416915
+// Aldruin Bonfim de Lima Souza - RA 10482416915
 
 import apiService from './api';
 
@@ -25,7 +25,12 @@ export const MedicamentoService = {
 
   criar: async (medicamento) => {
     try {
-      const response = await apiService.post('/medicamentos', medicamento);
+      const medicamentoFormatado = {
+        ...medicamento,
+        unidade_medida_id: parseInt(medicamento.unidade_medida_id, 10) || null, // Converte ID corretamente
+      };
+
+      const response = await apiService.post('/medicamentos', medicamentoFormatado);
       return response;
     } catch (error) {
       console.error('Erro ao criar medicamento:', error);
@@ -35,7 +40,12 @@ export const MedicamentoService = {
 
   atualizar: async (id, medicamento) => {
     try {
-      const response = await apiService.put(`/medicamentos/${id}`, medicamento);
+      const medicamentoFormatado = {
+        ...medicamento,
+        unidade_medida_id: parseInt(medicamento.unidade_medida_id, 10) || null, // Converte ID corretamente
+      };
+
+      const response = await apiService.put(`/medicamentos/${id}`, medicamentoFormatado);
       return response;
     } catch (error) {
       console.error('Erro ao atualizar medicamento:', error);
@@ -53,7 +63,7 @@ export const MedicamentoService = {
     }
   },
 
-  // Método mantido para compatibilidade mas não é mais usado
+  // Método mantido para compatibilidade, mas não é mais usado
   salvarTodos: (medicamentos) => {
     console.warn('salvarTodos está obsoleto. Use a API.');
   }

@@ -52,6 +52,14 @@ const GerenciarMedicamentos = () => {
     }
   };
 
+  const onAtualizarUnidade = (id, unidadeSelecionada) => {
+  setMedicamentos((meds) =>
+    meds.map((med) =>
+      med.id === id ? { ...med, unidade_medida_id: unidadeSelecionada } : med
+    )
+  );
+};
+
   const tiposUnicos = [...new Set(medicamentos.map((m) => m.tipo))];
 
   const abrirModalEditar = (med) => {
@@ -72,19 +80,24 @@ const GerenciarMedicamentos = () => {
   };
 
   const handleCadastrar = async (novoMedicamento) => {
-    try {
-      const response = await MedicamentoService.criar(novoMedicamento);
-      if (response.success) {
-        await carregarMedicamentos();
-        mostrarToast('Medicamento cadastrado com sucesso!', 'success');
-        fecharModais();
-      } else {
-        mostrarToast('Erro ao cadastrar medicamento: ' + response.message, 'error');
-      }
-    } catch (error) {
-      mostrarToast('Erro ao cadastrar medicamento: ' + error.message, 'error');
+  try {
+    const medicamentoFormatado = {
+      ...novoMedicamento,
+      unidade_medida_id: parseInt(novoMedicamento.unidade_medida_id, 10) || null,
+    };
+
+    const response = await MedicamentoService.criar(medicamentoFormatado);
+    if (response.success) {
+      await carregarMedicamentos();
+      mostrarToast('Medicamento cadastrado com sucesso!', 'success');
+      fecharModais();
+    } else {
+      mostrarToast('Erro ao cadastrar medicamento: ' + response.message, 'error');
     }
-  };
+  } catch (error) {
+    mostrarToast('Erro ao cadastrar medicamento: ' + error.message, 'error');
+  }
+};
 
   const salvarEdicao = async (medAtualizado) => {
     try {
@@ -201,6 +214,7 @@ const GerenciarMedicamentos = () => {
           isOpen={isModalCadastroOpen}
           onClose={fecharModais}
           onCadastrar={handleCadastrar}
+          onAtualizarUnidade={onAtualizarUnidade}
         />
       )}
 
@@ -209,6 +223,7 @@ const GerenciarMedicamentos = () => {
           medicamento={medSelecionado}
           onClose={fecharModais}
           onSave={salvarEdicao}
+          onAtualizarUnidade={onAtualizarUnidade}
         />
       )}
 

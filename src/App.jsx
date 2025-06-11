@@ -14,6 +14,7 @@ import Despesas from './pages/Despesas'
 import LancarDespesa from './pages/LancarDespesa'
 import EstoqueEntradas from './pages/EstoqueEntradas'
 import EstoqueSaidas from './pages/EstoqueSaidas'
+import Unidadesmedida from './pages/GerenciarUnidadesMedida'
 import TitleHandler from "./components/TitleHandler";
 import './App.css'
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="consultas" element={<Consultas />} />
           <Route path="consultas/agendar" element={<AgendarConsulta />} />
           <Route path="medicamentos" element={<Medicamentos />} />
+          <Route path="unidades-medida" element={<Unidadesmedida />} />
           <Route path="doadores" element={<Doadores />} />
           <Route path="doacoes" element={<Doacoes />} />
           <Route path="despesas" element={<Despesas />} />
