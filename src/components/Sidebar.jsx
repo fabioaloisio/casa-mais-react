@@ -9,6 +9,7 @@ function Sidebar() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isMedicamentosOpen, setIsMedicamentosOpen] = useState(false);
+  const [isDespesasOpen, setIsDespesasOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
@@ -76,14 +77,21 @@ function Sidebar() {
               className={location.pathname.includes('/doacoes') ? 'active' : ''}>
               <FaDonate /> Gestão de Doações
             </Nav.Link>
-            <Nav.Link as={Link} onClick={closeSidebar} to="/despesas"
-              className={location.pathname.includes('/despesas') ? 'active' : ''}>
+            
+            <Nav.Link onClick={() => setIsDespesasOpen(!isDespesasOpen)} className={isDespesasOpen ? 'active' : ''}>
               <FaMoneyBillWave /> Gestão de Despesas
             </Nav.Link>
-            <Nav.Link as={Link} onClick={closeSidebar} to="/tipos-despesas"
-              className={location.pathname.includes('/tipos-despesas') ? 'active' : ''}>
-              <FaTags /> Gestão de Tipos de Despesas
-            </Nav.Link>
+
+            {isDespesasOpen && (
+              <div className="submenu">
+                <Nav.Link as={Link} onClick={closeSidebar} to="/despesas">
+                  <FaMoneyBillWave /> Gerenciar Despesas
+                </Nav.Link>
+                <Nav.Link as={Link} onClick={closeSidebar} to="/tipos-despesas">
+                  <FaTags /> Gerenciar Tipos de Despesas
+                </Nav.Link>
+              </div>
+            )}
           </div>
         </Nav>
       </aside>

@@ -2,9 +2,6 @@ import { useState, useEffect, useCallback } from 'react'
 
 /**
  * Hook para gerenciar mudanças não salvas em formulários
- * @param {Object} initialData - Dados iniciais do formulário
- * @param {Object} currentData - Dados atuais do formulário
- * @returns {Object} - { hasUnsavedChanges, confirmClose }
  */
 export function useUnsavedChanges(initialData, currentData) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)

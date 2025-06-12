@@ -2,21 +2,63 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 270px;
+  width: 280px;
   height: 100vh;
+  max-height: 100vh;
   background-color: rgb(26, 35, 50);
   padding: 0;
-  overflow-y: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
+  /* Garante scroll em todos os zoom levels - SEMPRE VISÍVEL */
+  scrollbar-width: auto;
+  scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.1);
+  overflow-y: scroll !important;
 }
+
+/* Webkit scrollbar customization - SEMPRE VISÍVEL */
+.sidebar::-webkit-scrollbar {
+  width: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  border: 2px solid rgba(26, 35, 50, 1);
+  min-height: 20px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar::-webkit-scrollbar-thumb:active {
+  background-color: rgba(74, 126, 250, 0.8);
+}
+
+/* Força compatibilidade com zoom em navegadores WebKit */
+@supports (-webkit-appearance: none) {
+  .sidebar {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
 
 .logo-container {
   padding: 1rem 0.5rem;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
 }
 
 .logo {
@@ -29,8 +71,31 @@
   display: flex;
   flex-direction: column;
   padding: 0.5rem 0;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: calc(100vh - 120px); /* FORÇAR ALTURA MÍNIMA PARA 3 BLOCOS */
   overflow-y: auto;
+  height: auto;
+  /* Scrollbar para o menu interno também */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Scrollbar do menu interno */
+.menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .menu>.nav-link {
@@ -87,6 +152,9 @@
   background-color: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(74, 126, 250, 0.2);
   border-radius: 8px;
+  /* GARANTIR QUE SEMPRE APAREÇA */
+  min-height: 120px; /* Altura mínima para cada bloco */
+  flex-shrink: 0; /* Nunca reduzir altura */
 }
 
 .menu-section:nth-child(2) {
@@ -216,6 +284,16 @@
     display: block;
   }
 
+  /* Remover altura mínima em mobile para comportamento natural */
+  .menu {
+    min-height: auto;
+  }
+
+  .menu-section {
+    min-height: auto; /* Remove altura mínima em mobile */
+    flex-shrink: 1; /* Permite redução em mobile */
+  }
+
   /* Aumentar tamanho para toque */
   .menu>.nav-link {
     padding: 0.75rem 1rem;
@@ -245,3 +323,12 @@
     padding: 1.5rem 1rem;
   }
 }
+
+
+/* Large screens - apenas ajustes mínimos */
+@media (min-width: 1200px) {
+  .sidebar {
+    width: 280px;
+  }
+}
+
