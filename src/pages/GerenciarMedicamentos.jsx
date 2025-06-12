@@ -1,4 +1,3 @@
-// Aldruin Bonfim de Lima Souza - RA 10482416915
 import React, { useState, useEffect } from 'react';
 import TabelaMedicamentos from '../components/medicamentos/TabelaMedicamentos';
 import ModalCadastroMedicamento from '../components/medicamentos/ModalCadastroMedicamento';
@@ -11,9 +10,8 @@ import './Doacoes.css';
 import { FaPlus } from 'react-icons/fa';
 
 const GerenciarMedicamentos = () => {
-  const [tipoFiltro, setTipoFiltro] = useState('todos');
+  const [formaFarmaceuticaFiltro, setFormaFarmaceuticaFiltro] = useState('todos');
   const [nomeFiltro, setNomeFiltro] = useState('');
-
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +19,6 @@ const GerenciarMedicamentos = () => {
   const [isModalCadastroOpen, setIsModalCadastroOpen] = useState(false);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
   const [modalExcluirAberto, setModalExcluirAberto] = useState(false);
-
   const [medSelecionado, setMedSelecionado] = useState(null);
 
   const [toast, setToast] = useState({
@@ -52,15 +49,7 @@ const GerenciarMedicamentos = () => {
     }
   };
 
-  const onAtualizarUnidade = (id, unidadeSelecionada) => {
-  setMedicamentos((meds) =>
-    meds.map((med) =>
-      med.id === id ? { ...med, unidade_medida_id: unidadeSelecionada } : med
-    )
-  );
-};
-
-  const tiposUnicos = [...new Set(medicamentos.map((m) => m.tipo))];
+  const formasFarmaceuticasUnicas = [...new Set(medicamentos.map((m) => m.forma_farmaceutica))];
 
   const abrirModalEditar = (med) => {
     setMedSelecionado(med);
@@ -80,24 +69,24 @@ const GerenciarMedicamentos = () => {
   };
 
   const handleCadastrar = async (novoMedicamento) => {
-  try {
-    const medicamentoFormatado = {
-      ...novoMedicamento,
-      unidade_medida_id: parseInt(novoMedicamento.unidade_medida_id, 10) || null,
-    };
+    try {
+      const medicamentoFormatado = {
+        ...novoMedicamento,
+        unidade_medida_id: parseInt(novoMedicamento.unidade_medida_id, 10) || null,
+      };
 
-    const response = await MedicamentoService.criar(medicamentoFormatado);
-    if (response.success) {
-      await carregarMedicamentos();
-      mostrarToast('Medicamento cadastrado com sucesso!', 'success');
-      fecharModais();
-    } else {
-      mostrarToast('Erro ao cadastrar medicamento: ' + response.message, 'error');
+      const response = await MedicamentoService.criar(medicamentoFormatado);
+      if (response.success) {
+        await carregarMedicamentos();
+        mostrarToast('Medicamento cadastrado com sucesso!', 'success');
+        fecharModais();
+      } else {
+        mostrarToast('Erro ao cadastrar medicamento: ' + response.message, 'error');
+      }
+    } catch (error) {
+      mostrarToast('Erro ao cadastrar medicamento: ' + error.message, 'error');
     }
-  } catch (error) {
-    mostrarToast('Erro ao cadastrar medicamento: ' + error.message, 'error');
-  }
-};
+  };
 
   const salvarEdicao = async (medAtualizado) => {
     try {
@@ -130,39 +119,11 @@ const GerenciarMedicamentos = () => {
   };
 
   const medicamentosFiltrados = medicamentos.filter((med) => {
-    const filtroTipo = tipoFiltro === 'todos' || med.tipo === tipoFiltro;
+    const filtroFormaFarmaceutica =
+      formaFarmaceuticaFiltro === 'todos' || med.forma_farmaceutica === formaFarmaceuticaFiltro;
     const filtroNome = med.nome.toLowerCase().includes(nomeFiltro.toLowerCase());
-    return filtroTipo && filtroNome;
+    return filtroFormaFarmaceutica && filtroNome;
   });
-
-  if (loading) {
-    return (
-      <div className="conteudo">
-        <div className="topo">
-          <h1>Gerenciar Medicamentos</h1>
-        </div>
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-          <p>Carregando medicamentos...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="conteudo">
-        <div className="topo">
-          <h1>Gerenciar Medicamentos</h1>
-        </div>
-        <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
-          <p>{error}</p>
-          <button onClick={carregarMedicamentos} style={{ marginTop: '10px' }}>
-            Tentar Novamente
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="conteudo">
@@ -172,23 +133,20 @@ const GerenciarMedicamentos = () => {
       </div>
 
       <div className="top-bar">
-        <button
-          className="btn-cadastrar"
-          onClick={() => setIsModalCadastroOpen(true)}
-        >
-          <FaPlus />  Cadastrar Medicamento
+        <button className="btn-cadastrar" onClick={() => setIsModalCadastroOpen(true)}>
+          <FaPlus /> Cadastrar Medicamento
         </button>
 
         <div className="filtros">
           <select
-            value={tipoFiltro}
-            onChange={(e) => setTipoFiltro(e.target.value)}
+            value={formaFarmaceuticaFiltro}
+            onChange={(e) => setFormaFarmaceuticaFiltro(e.target.value)}
             className="select-filtro"
           >
-            <option value="todos">Todos os tipos</option>
-            {tiposUnicos.map((tipo) => (
-              <option key={tipo} value={tipo}>
-                {tipo}
+            <option value="todos">Todas as formas</option>
+            {formasFarmaceuticasUnicas.map((forma) => (
+              <option key={forma} value={forma}>
+                {forma}
               </option>
             ))}
           </select>
@@ -203,44 +161,13 @@ const GerenciarMedicamentos = () => {
         </div>
       </div>
 
-      <TabelaMedicamentos
-        medicamentos={medicamentosFiltrados}
-        onEditar={abrirModalEditar}
-        onExcluir={abrirModalExcluir}
-      />
+      <TabelaMedicamentos medicamentos={medicamentosFiltrados} onEditar={abrirModalEditar} onExcluir={abrirModalExcluir} />
 
-      {isModalCadastroOpen && (
-        <ModalCadastroMedicamento
-          isOpen={isModalCadastroOpen}
-          onClose={fecharModais}
-          onCadastrar={handleCadastrar}
-          onAtualizarUnidade={onAtualizarUnidade}
-        />
-      )}
+      {isModalCadastroOpen && <ModalCadastroMedicamento isOpen={isModalCadastroOpen} onClose={fecharModais} onCadastrar={handleCadastrar} />}
+      {modalEditarAberto && medSelecionado && <ModalEditarMedicamento medicamento={medSelecionado} onClose={fecharModais} onSave={salvarEdicao} />}
+      {modalExcluirAberto && medSelecionado && <ModalExclusaoMedicamento medicamento={medSelecionado} onClose={fecharModais} onConfirm={confirmarExclusao} />}
 
-      {modalEditarAberto && medSelecionado && (
-        <ModalEditarMedicamento
-          medicamento={medSelecionado}
-          onClose={fecharModais}
-          onSave={salvarEdicao}
-          onAtualizarUnidade={onAtualizarUnidade}
-        />
-      )}
-
-      {modalExcluirAberto && medSelecionado && (
-        <ModalExclusaoMedicamento
-          medicamento={medSelecionado}
-          onClose={fecharModais}
-          onConfirm={confirmarExclusao}
-        />
-      )}
-
-      <Toast
-        show={toast.show}
-        onClose={() => setToast({ ...toast, show: false })}
-        message={toast.message}
-        type={toast.type}
-      />
+      <Toast show={toast.show} onClose={() => setToast({ ...toast, show: false })} message={toast.message} type={toast.type} />
     </div>
   );
 };

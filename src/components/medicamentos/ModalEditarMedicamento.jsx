@@ -7,9 +7,9 @@ import { UnidadeMedidaService } from '../../services/unidadesMedidaService.js';
 const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     nome: '',
-    tipo: '',
-    quantidade: '',
-    unidadeMedida: ''
+    forma_farmaceutica: '',
+    descricao: '',
+    unidade_medida_id: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -82,31 +82,31 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Tipo *</Form.Label>
+            <Form.Label>Forma Farmacêutica *</Form.Label>
             <Form.Control
               type="text"
-              name="tipo"
-              value={formData.tipo}
+              name="forma_farmaceutica"
+              value={formData.forma_farmaceutica}
               onChange={handleInputChange}
               placeholder="Ex: Comprimido, Xarope, etc."
-              isInvalid={!!errors.tipo}
+              isInvalid={!!errors.forma_farmaceutica}
             />
-            <Form.Control.Feedback type="invalid">{errors.tipo}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.forma_farmaceutica}</Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Quantidade *</Form.Label>
+            <Form.Label>Descrição *</Form.Label>
             <Form.Control
-              type="number"
-              name="quantidade"
-              value={formData.quantidade}
+              type="text"
+              name="descricao"
+              value={formData.descricao}
               onChange={handleInputChange}
-              placeholder="Informe a quantidade"
-              min="0"
-              isInvalid={!!errors.quantidade}
+              placeholder="Descreva brevemente o medicamento"
+              maxLength="250" // Limite de caracteres
+              isInvalid={!!errors.descricao}
             />
-            <Form.Control.Feedback type="invalid">{errors.quantidade}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.descricao}</Form.Control.Feedback>
           </Form.Group>
         </Col>
       </Row>
@@ -130,7 +130,7 @@ const ModalEditarMedicamento = ({ medicamento, onClose, onSave }) => {
               ))}
             </Form.Control>
 
-            <Form.Control.Feedback type="invalid">{errors.unidadeMedida}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.unidade_medida_id}</Form.Control.Feedback>
           </Form.Group>
         </Col>
       </Row>
