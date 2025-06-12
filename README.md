@@ -91,6 +91,12 @@ src/
 │   │   ├── Toast.jsx                     # Notificações do tipo toast
 │   │   └── useUnsavedChanges.js          # Hook para detectar mudanças não salvas
 │
+│   ├── despesas/                         # Componentes para gestão de despesas
+│   │   ├── ConfirmDeleteModal.jsx        # Modal de confirmação de exclusão de despesa
+│   │   ├── ConfirmDeleteTipoDespesaModal.jsx # Modal de confirmação de exclusão de tipo
+│   │   ├── DespesaFormModal.jsx          # Modal para cadastrar/editar despesas
+│   │   └── TipoDespesaFormModal.jsx      # Modal para cadastrar/editar tipos de despesas
+│
 │   ├── doacoes/                          # Componentes relacionados a doações e doadores
 │   │   ├── ConfirmDeleteModal.jsx        # Modal de confirmação de exclusão
 │   │   ├── DoacaoModal.css               # Estilo do modal de doações
@@ -103,6 +109,12 @@ src/
 │   │   ├── ModalEditarMedicamento.jsx    # Modal de edição
 │   │   ├── ModalExclusaoMedicamento.jsx  # Modal de exclusão
 │   │   └── TabelaMedicamentos.jsx        # Tabela geral de medicamentos
+│
+│   ├── unidadesMedida/                   # Componentes para unidades de medida
+│   │   ├── ModalCadastroUnidadeMedida.jsx # Modal de criação de unidade
+│   │   ├── ModalEditarUnidadeMedida.jsx  # Modal de edição de unidade
+│   │   ├── ModalExclusaoUnidadeMedida.jsx # Modal de exclusão de unidade
+│   │   └── TabelaUnidadesMedida.jsx      # Tabela geral de unidades de medida
 │
 │   ├── usuarios/                         # Componentes para usuários do sistema
 │   │   └── UsuarioModal.jsx              # Modal de cadastro/edição de usuário
@@ -127,8 +139,9 @@ src/
 │   ├── Doacoes.jsx / .css                # Página de doações
 │   ├── EstoqueEntradas.jsx               # Entradas no estoque
 │   ├── EstoqueSaidas.jsx                 # Saídas do estoque
-│   ├── GerenciarMedicamentos.jsx         # Tela de controle de medicamentos
-│   ├── GerenciarMedicamentos.css         # Estilo da tela de medicamentos
+│   ├── GerenciarMedicamentos.jsx / .css  # Tela de controle de medicamentos
+│   ├── GerenciarTiposDespesas.jsx        # Gestão de tipos de despesas
+│   ├── GerenciarUnidadesMedida.jsx / .css # Gestão de unidades de medida
 │   ├── LancarDespesa.jsx                 # Lançamento de despesas
 │   └── Usuarios.jsx / .css               # Tela de administração de usuários
 
@@ -137,6 +150,8 @@ src/
 │   ├── assistidasService.js              # ✅ Serviço de assistidas com API ready
 │   ├── doacoesService.js                 # ✅ Serviço de doações integrado com API
 │   ├── doadoresService.js                # ✅ Serviço de doadores integrado com API
+│   ├── despesasService.js                # ✅ Serviço de despesas integrado com API
+│   ├── unidadesMedidaService.js          # ✅ Serviço de unidades de medida integrado com API
 │   └── MedicamentoService.js             # ✅ Serviço de medicamentos integrado com API
 
 ├── styles/                             # Estilos globais e variáveis
@@ -196,6 +211,8 @@ VITE_API_URL=http://localhost:3003/api
 - **AssistidasService** - Serviço de gestão de assistidas
 - **DoadoresService** - Serviço completo para gestão de doadores
 - **DoacoesService** - Serviço completo para gestão de doações
+- **DespesasService** - Serviço completo para gestão de despesas e tipos de despesas
+- **UnidadesMedidaService** - Serviço para gestão de unidades de medida
 - **MedicamentoService** - Integração com API de medicamentos
 
 ### Recursos da Integração
@@ -295,20 +312,22 @@ npm start
 - **Medicamentos** - Controle de estoque (integrado com API)
 - **Doadores** - **Gestão completa de doadores** com validação CPF/CNPJ
 - **Doações** - Registro de contribuições (integrado com API MySQL)
-- **Despesas** - Controle financeiro
+- **Despesas** - Controle financeiro com gestão de tipos de despesas
+- **Unidades de Medida** - Gestão de unidades para medicamentos (integrado com API)
 
 ### Status de Integração
 
 | Módulo           | Status                | Funcionalidades                   | Integração Backend    |
 | ---------------- | --------------------- | --------------------------------- | --------------------- |
-| Dashboard        | 🔄 Em desenvolvimento | Estatísticas básicas              | 🔄 Em desenvolvimento |
-| Usuários         | 🟡 Frontend           | CRUD básico + UI completa         | 🔄 Em desenvolvimento |
-| **Assistidas**   | **🟢 Integrado**      | **CRUD + Filtros + Perfil + UI**  | **✅ MySQL API**      |
-| Consultas        | 🟡 Frontend           | CRUD básico + UI                  | 🔄 Em desenvolvimento |
 | **Medicamentos** | **🟢 Integrado**      | **CRUD completo + API**           | **✅ MySQL API**      |
 | **Doadores**     | **🟢 Integrado**      | **CRUD + Validação + Sort + API** | **✅ MySQL API**      |
 | **Doações**      | **🟢 Integrado**      | **CRUD + Seletor Doador + API**   | **✅ MySQL API**      |
-| Despesas         | 🟡 Frontend           | CRUD básico + UI                  | 🔄 Em desenvolvimento |
+| **Assistidas**   | **🟢 Integrado**      | **CRUD + Filtros + Perfil + UI**  | **✅ MySQL API**      |
+| **Despesas**     | **🟢 Melhorado**      | **CRUD + Tipos de Despesas + UI** | **✅ MySQL API**      |
+| **Unidades Medida** | **🟢 Integrado**   | **CRUD completo + API**           | **✅ MySQL API**      |
+| Dashboard        | 🔄 Em desenvolvimento | Estatísticas básicas              | 🔄 Em desenvolvimento |
+| Usuários         | 🔄 Em desenvolvimento | CRUD básico + UI completa         | 🔄 Em desenvolvimento |
+| Consultas        | 🔄 Em desenvolvimento | CRUD básico + UI                  | 🔄 Em desenvolvimento |
 
 ### Legenda do Status
 
@@ -345,6 +364,17 @@ O módulo de Gestão de Doadores está **completamente integrado** com:
 - ✅ **Cards de Estatísticas**: Total, ativos, PF e PJ
 - ✅ **API Integrada**: Totalmente conectado ao backend MySQL
 
+#### 🆕 Módulo Despesas - Melhorias Recentes
+
+O módulo de Gestão de Despesas foi **melhorado** com:
+
+- ✅ **Sistema de Tipos de Despesas**: CRUD completo para categorização
+- ✅ **Interface Atualizada**: Menu renomeado para "Gestão de Tipos de Despesas"
+- ✅ **Máscaras Aprimoradas**: Utilitários de entrada melhorados
+- ✅ **Integração Completa**: API totalmente conectada ao backend MySQL
+- ✅ **Validação de Dados**: Controle de integridade referencial
+- ✅ **UI Responsiva**: Interface otimizada para todos os dispositivos
+
 ### Pré-requisitos para Integração
 
 Para usar os módulos integrados (Medicamentos, Doadores, Doações e Assistidas), você precisa:
@@ -357,11 +387,14 @@ Para usar os módulos integrados (Medicamentos, Doadores, Doações e Assistidas
 
 ```
 Backend: http://localhost:3003/api
-├── /medicamentos    # CRUD completo de medicamentos ✅
-├── /doadores        # CRUD completo de doadores ✅
-├── /doacoes         # CRUD completo de doações ✅
-├── /assistidas      # CRUD completo de assistidas ✅
-└── /health          # Status da API
+├── /medicamentos      # CRUD completo de medicamentos ✅
+├── /doadores          # CRUD completo de doadores ✅
+├── /doacoes           # CRUD completo de doações ✅
+├── /assistidas        # CRUD completo de assistidas ✅
+├── /despesas          # CRUD completo de despesas ✅
+├── /tipos-despesas    # CRUD completo de tipos de despesas ✅
+├── /unidades-medida   # CRUD completo de unidades de medida ✅
+└── /health            # Status da API
 ```
 
 ## 🧹 Limpeza de Código

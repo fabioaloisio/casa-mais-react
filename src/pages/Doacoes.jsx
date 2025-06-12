@@ -208,46 +208,54 @@ const Doacoes = () => {
       {/* Cards de Estatísticas */}
       <Row className="mb-4">
         <Col md={3}>
-          <Card className="stats-card">
-            <Card.Body className="d-flex align-items-center justify-content-between">
-              <div>
-                <h6 className="text-muted mb-1">Total de Doações</h6>
-                <h3 className="mb-0">{stats.totalDoacoes}</h3>
+          <Card className="stats-card h-100">
+            <Card.Body className="d-flex align-items-center">
+              <div className="me-3">
+                <FaChartLine size={30} className="text-primary" />
               </div>
-              <FaChartLine size={30} className="text-primary" />
+              <div>
+                <h6 className="mb-0 text-muted">Total de Doações</h6>
+                <h4 className="mb-0">{stats.totalDoacoes}</h4>
+              </div>
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stats-card">
-            <Card.Body className="d-flex align-items-center justify-content-between">
-              <div>
-                <h6 className="text-muted mb-1">Valor Total</h6>
-                <h3 className="mb-0">{formatCurrency(stats.valorTotal)}</h3>
+          <Card className="stats-card h-100">
+            <Card.Body className="d-flex align-items-center">
+              <div className="me-3">
+                <FaDollarSign size={30} className="text-success" />
               </div>
-              <FaDollarSign size={30} className="text-success" />
+              <div>
+                <h6 className="mb-0 text-muted">Valor Total</h6>
+                <h4 className="mb-0">{formatCurrency(stats.valorTotal)}</h4>
+              </div>
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stats-card">
-            <Card.Body className="d-flex align-items-center justify-content-between">
-              <div>
-                <h6 className="text-muted mb-1">Pessoa Física</h6>
-                <h3 className="mb-0">{stats.totalPessoaFisica}</h3>
+          <Card className="stats-card h-100">
+            <Card.Body className="d-flex align-items-center">
+              <div className="me-3">
+                <FaUsers size={30} className="text-info" />
               </div>
-              <FaUsers size={30} className="text-info" />
+              <div>
+                <h6 className="mb-0 text-muted">Pessoa Física</h6>
+                <h4 className="mb-0">{stats.totalPessoaFisica}</h4>
+              </div>
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stats-card">
-            <Card.Body className="d-flex align-items-center justify-content-between">
-              <div>
-                <h6 className="text-muted mb-1">Pessoa Jurídica</h6>
-                <h3 className="mb-0">{stats.totalPessoaJuridica}</h3>
+          <Card className="stats-card h-100">
+            <Card.Body className="d-flex align-items-center">
+              <div className="me-3">
+                <FaBuilding size={30} className="text-warning" />
               </div>
-              <FaBuilding size={30} className="text-warning" />
+              <div>
+                <h6 className="mb-0 text-muted">Pessoa Jurídica</h6>
+                <h4 className="mb-0">{stats.totalPessoaJuridica}</h4>
+              </div>
             </Card.Body>
           </Card>
         </Col>

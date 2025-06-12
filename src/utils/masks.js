@@ -45,6 +45,9 @@ export const formatCurrency = (value) => {
   }).format(numericValue);
 };
 
+// Alias para formatCurrency (compatibilidade)
+export const formatMoney = formatCurrency;
+
 // Remover formatação de valor monetário
 export const parseCurrency = (value) => {
   if (!value) return 0;
