@@ -82,8 +82,11 @@ class DoacoesService {
       return response.success;
     } catch (error) {
       console.error('Erro ao deletar doação:', error);
-      if (error.message.includes('404')) {
+      if (error.status === 404 || error.message.includes('404')) {
         throw new Error('Doação não encontrada.');
+      }
+      if (error.status === 403 || error.message.includes('403') || error.message.includes('não é permitido') || error.message.includes('Não é permitido')) {
+        throw new Error('Não é permitido excluir doações. As doações devem ser mantidas para histórico e auditoria.');
       }
       throw new Error('Erro ao excluir doação. Tente novamente.');
     }

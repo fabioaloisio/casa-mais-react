@@ -27,7 +27,9 @@ class ApiService {
         const errorData = await response.json().catch(() => ({ 
           message: `Erro HTTP: ${response.status}` 
         }));
-        throw new Error(errorData.message || `Erro ${response.status}`);
+        const error = new Error(errorData.message || `Erro ${response.status}`);
+        error.status = response.status;
+        throw error;
       }
 
       const data = await response.json();

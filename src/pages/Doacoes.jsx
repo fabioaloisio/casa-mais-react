@@ -182,6 +182,10 @@ const Doacoes = () => {
           valorA = parseFloat(a.valor) || 0;
           valorB = parseFloat(b.valor) || 0;
           break;
+        case 'ativo':
+          valorA = a.doador?.ativo ? 1 : 0;
+          valorB = b.doador?.ativo ? 1 : 0;
+          break;
         default:
           return 0;
       }
@@ -323,13 +327,20 @@ const Doacoes = () => {
               >
                 Data {getSortIcon('dataDoacao')}
               </th>
+              <th 
+                className="cursor-pointer user-select-none"
+                onClick={() => handleOrdenar('ativo')}
+                title="Clique para ordenar por status do doador"
+              >
+                Status Doador {getSortIcon('ativo')}
+              </th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="8" className="text-center py-4">
                   <div className="d-flex justify-content-center align-items-center">
                     <div className="spinner-border text-primary me-2" role="status">
                       <span className="visually-hidden">Carregando...</span>
@@ -340,7 +351,7 @@ const Doacoes = () => {
               </tr>
             ) : doacoesFiltradas.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-4">
+                <td colSpan="8" className="text-center py-4">
                   <div className="text-muted">
                     <p className="mb-0">Nenhuma doação encontrada</p>
                     <small>Tente ajustar os filtros ou clique em "Nova Doação"</small>
@@ -368,6 +379,11 @@ const Doacoes = () => {
                   </td>
                   <td>
                     {new Date(doacao.dataDoacao).toLocaleDateString('pt-BR')}
+                  </td>
+                  <td>
+                    <span className={`status ${doacao.doador?.ativo ? 'ativa' : 'inativa'}`}>
+                      {doacao.doador?.ativo ? 'Ativo' : 'Inativo'}
+                    </span>
                   </td>
                   <td>
                     <div className="d-flex gap-1">
