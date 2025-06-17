@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Table, Form, Card, Row, Col } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaPlus, FaSearch, FaDollarSign, FaUsers, FaBuilding, FaChartLine, FaUserTie, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaSearch, FaUsers, FaBuilding, FaChartLine, FaUserTie, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import doadoresService from '../services/doadoresService';
 import { formatCPF, formatCNPJ } from '../utils/masks';
 import DoadorFormModal from '../components/doacoes/DoadorFormModal';
@@ -17,7 +17,6 @@ const Doadores = () => {
   const [doadorToDelete, setDoadorToDelete] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [loading, setLoading] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [ordenacao, setOrdenacao] = useState({ campo: 'nome', direcao: 'asc' });
   
   const [stats, setStats] = useState({
@@ -111,7 +110,6 @@ const Doadores = () => {
   const handleConfirmDelete = async () => {
     if (doadorToDelete) {
       try {
-        setDeleting(true);
         await doadoresService.delete(doadorToDelete.id);
         setToast({
           show: true,
@@ -128,8 +126,6 @@ const Doadores = () => {
         });
         console.error('Erro ao excluir doador:', error);
         handleCloseDeleteModal();
-      } finally {
-        setDeleting(false);
       }
     }
   };
@@ -206,6 +202,10 @@ const Doadores = () => {
         case 'data_cadastro':
           valorA = new Date(a.data_cadastro || 0);
           valorB = new Date(b.data_cadastro || 0);
+          break;
+        case 'ativo':
+          valorA = a.ativo ? 1 : 0;
+          valorB = b.ativo ? 1 : 0;
           break;
         default:
           return 0;
@@ -347,13 +347,20 @@ const Doadores = () => {
               >
                 Endereço {getSortIcon('endereco')}
               </th>
+              <th 
+                className="cursor-pointer user-select-none"
+                onClick={() => handleOrdenar('ativo')}
+                title="Clique para ordenar por status"
+              >
+                Status {getSortIcon('ativo')}
+              </th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center py-4">
+                <td colSpan="7" className="text-center py-4">
                   <div className="d-flex justify-content-center align-items-center">
                     <div className="spinner-border text-primary me-2" role="status">
                       <span className="visually-hidden">Carregando...</span>
@@ -364,7 +371,7 @@ const Doadores = () => {
               </tr>
             ) : doadoresFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-4">
+                <td colSpan="7" className="text-center py-4">
                   <div className="text-muted">
                     <p className="mb-0">Nenhum doador encontrado</p>
                     <small>Tente ajustar os filtros ou clique em "Novo Doador"</small>
@@ -400,6 +407,11 @@ const Doadores = () => {
                     ) : (
                       <span className="text-muted">-</span>
                     )}
+                  </td>
+                  <td>
+                    <span className={`status ${doador.ativo ? 'ativa' : 'inativa'}`}>
+                      {doador.ativo ? 'Ativo' : 'Inativo'}
+                    </span>
                   </td>
                   <td>
                     <div className="d-flex gap-1">
